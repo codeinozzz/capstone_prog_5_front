@@ -1,0 +1,29 @@
+.footer {
+  background: #f5f5f5;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #ddd;
+}
+
+.links {
+  display: flex;
+  gap: 20px;
+  
+  span {
+    color: #666;
+    cursor: pointer;
+    
+    &:hover {
+      color: #333;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

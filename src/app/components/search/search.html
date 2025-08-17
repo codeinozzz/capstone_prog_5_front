@@ -1,0 +1,12 @@
+<div class="search-box">
+  <h3>Buscar Hoteles</h3>
+  <input 
+    type="text" 
+    [(ngModel)]="searchText" 
+    placeholder="Buscar por nombre o ubicación">
+  
+  <div class="buttons">
+    <button (click)="onSearch()">Buscar</button>
+    <button (click)="onClear()">Limpiar</button>
+  </div>
+</div>

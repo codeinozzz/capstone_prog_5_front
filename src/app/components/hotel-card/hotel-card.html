@@ -1,0 +1,7 @@
+<div class="card">
+  <img [src]="hotel.image" [alt]="hotel.name" class="hotel-image">
+  <h3>{{ hotel.name }}</h3>
+  <p>{{ hotel.location }}</p>
+  <p class="price">${{ hotel.price }} por noche</p>
+  <button (click)="onReservar()">Reservar</button>
+</div>

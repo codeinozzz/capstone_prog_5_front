@@ -1,0 +1,15 @@
+<app-header></app-header>
+
+<div class="main-content">
+  <h2>Hoteles Disponibles</h2>
+  
+  <div class="hotels-grid">
+    <app-hotel-card 
+      *ngFor="let hotel of hotels"
+      [hotel]="hotel"
+      (hotelClicked)="onHotelReservado($event)">
+    </app-hotel-card>
+  </div>
+</div>
+
+<app-footer></app-footer>
