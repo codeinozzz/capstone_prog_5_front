@@ -1,4 +1,4 @@
-// src/app/pages/booking/booking.ts - IMPORTS CORREGIDOS
+// src/app/pages/booking/booking.ts - CORREGIDO SIMPLE
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,7 +30,7 @@ export class BookingPageComponent implements OnInit {
   hotel: Hotel | null = null;
   hotelId: string = '';
   roomId?: string;
-  loading = true;
+  loading = true;  // Cambiado de 'loading' para coincidir con template
   error: string | null = null;
 
   constructor(
@@ -40,10 +40,9 @@ export class BookingPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Obtener parámetros de la URL
     this.route.params.subscribe(params => {
       this.hotelId = params['hotelId'];
-      this.roomId = params['roomId']; // Opcional
+      this.roomId = params['roomId'];
       
       if (this.hotelId) {
         this.loadHotel();
@@ -54,7 +53,6 @@ export class BookingPageComponent implements OnInit {
     });
   }
 
-  // Cargar información del hotel
   loadHotel() {
     this.hotelService.getHotelById(this.hotelId).subscribe({
       next: (hotel) => {
@@ -69,14 +67,12 @@ export class BookingPageComponent implements OnInit {
     });
   }
 
-  // Manejar reserva completada
+  // Método que espera el template
   onBookingCompleted(bookingResponse: any) {
     console.log('Booking completed:', bookingResponse);
-    // Aquí podrías navegar a una página de confirmación
-    // this.router.navigate(['/booking-confirmation', bookingResponse.data.bookingId]);
   }
 
-  // Volver atrás
+  // Método que espera el template
   goBack() {
     this.router.navigate(['/']);
   }

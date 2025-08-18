@@ -1,4 +1,4 @@
-// src/app/app.routes.ts - ACTUALIZADO
+// src/app/app.routes.ts - CORREGIDO SIMPLE
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -19,7 +19,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/booking/booking').then(c => c.BookingPageComponent) 
   },
   { 
+    path: '404',
+    loadComponent: () => import('./pages/not-found/not-found').then(c => c.NotFoundComponent)
+  },
+  { 
     path: '**', 
-    redirectTo: '' 
+    redirectTo: '/404'
   }
 ];

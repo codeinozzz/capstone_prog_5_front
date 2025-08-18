@@ -1,13 +1,12 @@
-// src/app/components/header/header.ts - SIN MatDividerModule
+// src/app/components/header/header.ts - CON NAVEGACIÓN SIMPLE
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-// MatDividerModule removido para evitar errores
 
 import { ClerkService, ClerkUser } from '../../services/clerk.service';
 
@@ -16,12 +15,12 @@ import { ClerkService, ClerkUser } from '../../services/clerk.service';
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule, // Agregado para routerLink
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatProgressSpinnerModule
-    // MatDividerModule removido
   ],
   templateUrl: './header.html',
   styleUrl: './header.scss'
@@ -37,38 +36,23 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Escuchar estado de carga de Clerk
     this.clerkService.clerkLoaded$.subscribe(loaded => {
       this.clerkLoading = !loaded;
     });
 
-    // Escuchar cambios en autenticación
     this.clerkService.isAuthenticated$.subscribe(authenticated => {
       this.isAuthenticated = authenticated;
     });
 
-    // Escuchar cambios en el usuario
     this.clerkService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
   }
 
-  // Navegar a home
-  goHome(): void {
-    this.router.navigate(['/']);
-  }
-
-  // Ir a página de login
-  goToLogin(): void {
-    this.router.navigate(['/login']);
-  }
-
-  // Abrir modal de login
   openSignIn(): void {
     this.clerkService.openSignIn();
   }
 
-  // Cerrar sesión
   async signOut(): Promise<void> {
     try {
       await this.clerkService.signOut();
@@ -77,7 +61,6 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  // Obtener nombre para mostrar
   getDisplayName(): string {
     if (!this.currentUser) return '';
     
@@ -93,7 +76,6 @@ export class HeaderComponent implements OnInit {
     return email ? email.split('@')[0] : 'Usuario';
   }
 
-  // Obtener email
   getEmail(): string {
     return this.currentUser?.emailAddresses[0]?.emailAddress || '';
   }

@@ -1,4 +1,4 @@
-<!-- src/app/components/header/header.html - VERSIÓN ALTERNATIVA SIMPLE -->
+<!-- src/app/components/header/header.html - CON NAVEGACIÓN SIMPLE -->
 <mat-toolbar color="primary" class="app-header">
   
   <!-- Logo/Brand - Lado izquierdo -->
@@ -6,21 +6,23 @@
     <button 
       mat-button 
       class="brand-button"
-      (click)="goHome()">
+      routerLink="/">
       <mat-icon>hotel</mat-icon>
       <span class="brand-text">Hotel Jala</span>
     </button>
   </div>
 
-  <!-- Centro con búsqueda -->
+  <!-- Navegación simple -->
   <div class="header-center">
-    <div class="search-container">
-      <mat-icon>search</mat-icon>
-      <input 
-        type="text" 
-        placeholder="Buscar hoteles..."
-        class="search-input">
-    </div>
+    <button mat-button routerLink="/" class="nav-link">
+      <mat-icon>home</mat-icon>
+      <span>Inicio</span>
+    </button>
+    
+    <button mat-button routerLink="/hotels" class="nav-link">
+      <mat-icon>hotel</mat-icon>
+      <span>Hoteles</span>
+    </button>
   </div>
 
   <!-- Lado derecho - Auth -->
@@ -47,14 +49,14 @@
         <button 
           mat-raised-button 
           class="auth-btn signup-btn"
-          (click)="goToLogin()">
+          routerLink="/login">
           <mat-icon>person_add</mat-icon>
           <span class="button-text">Registro</span>
         </button>
       </div>
     </ng-container>
 
-    <!-- Authenticated - Versión simplificada -->
+    <!-- Authenticated -->
     <ng-container *ngIf="!clerkLoading && isAuthenticated">
       <div class="user-section">
         <button 
@@ -66,7 +68,6 @@
           <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
         </button>
 
-        <!-- Dropdown simplificado -->
         <mat-menu #userMenu="matMenu" class="user-dropdown" xPosition="before">
           <div class="menu-user-header">
             <div class="menu-user-avatar">
@@ -80,19 +81,14 @@
           
           <div class="menu-divider"></div>
           
-          <button mat-menu-item>
+          <button mat-menu-item routerLink="/profile">
             <mat-icon>person</mat-icon>
             <span>Mi Perfil</span>
           </button>
           
-          <button mat-menu-item>
+          <button mat-menu-item routerLink="/my-bookings">
             <mat-icon>book_online</mat-icon>
             <span>Mis Reservas</span>
-          </button>
-          
-          <button mat-menu-item>
-            <mat-icon>favorite</mat-icon>
-            <span>Favoritos</span>
           </button>
           
           <div class="menu-divider"></div>
