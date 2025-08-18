@@ -1,15 +1,12 @@
-
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
+// src/styles.scss - CORREGIDO
+// ⚠️ IMPORTANTE: @use debe ir SIEMPRE al principio
 @use '@angular/material' as mat;
 
+// Configuración del tema Angular Material
 html {
   @include mat.theme((
     color: (
-      primary: mat.$azure-palette,
+      primary: mat.$green-palette,
       tertiary: mat.$blue-palette,
     ),
     typography: Roboto,
@@ -17,6 +14,7 @@ html {
   ));
 }
 
+// Configuración del body
 body {
   // Default the application to a light color theme. This can be changed to
   // `dark` to enable the dark color theme, or to `light dark` to defer to the
@@ -33,7 +31,141 @@ body {
   // Reset the user agent margin.
   margin: 0;
 }
-/* You can add global styles to this file, and also import other style files */
 
+/* Estilos globales */
+html, body { 
+  height: 100%; 
+}
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+/* Reset básico */
+* {
+  box-sizing: border-box;
+}
+
+/* Estilos para mejor UX */
+.mat-mdc-snack-bar-container {
+  &.error-snackbar {
+    --mdc-snackbar-container-color: #f44336;
+    --mdc-snackbar-supporting-text-color: #fff;
+    --mdc-snackbar-action-color: #fff;
+  }
+}
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-toolbar.mat-primary {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+// Asegurar que los botones del header se vean correctamente
+.app-header {
+  .mat-mdc-button {
+    color: white !important;
+    
+    &.mat-mdc-raised-button {
+      &.mat-accent {
+        background-color: #ff4081 !important;
+        color: white !important;
+      }
+    }
+  }
+  
+  .mat-mdc-menu-trigger {
+    color: white !important;
+  }
+}
+
+// Spinner blanco para el header
+.auth-loading mat-spinner circle {
+  stroke: white !important;
+}
+
+// Mejorar contraste en botones Material
+.mat-mdc-button:not(.mat-mdc-button-disabled) {
+  &.mat-primary {
+    color: white !important;
+  }
+}
+
+// Asegurar que los íconos del header sean blancos
+.app-header mat-icon {
+  color: white !important;
+}
+
+// Menu dropdown con mejor sombra
+.mat-mdc-menu-panel.user-dropdown {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  border-radius: 8px !important;
+}
+
+.mat-toolbar {
+  overflow: visible !important;
+  
+  &.app-header {
+    overflow: visible !important;
+  }
+}
+
+// Corregir el posicionamiento del menú de usuario
+.cdk-overlay-pane {
+  &:has(.user-dropdown) {
+    right: 16px !important; // Forzar posición desde la derecha
+  }
+}
+
+// Asegurar que el área de auth no se salga
+.auth-section {
+  overflow: visible !important;
+  
+  .user-menu {
+    overflow: visible !important;
+  }
+}
+
+// Forzar que el botón del usuario se mantenga dentro del viewport
+.user-button {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+// Corregir el dropdown del menú
+.mat-mdc-menu-panel {
+  &.user-dropdown {
+    max-width: 280px !important;
+    right: 0 !important;
+    
+    // Asegurar que no se salga de la pantalla
+    @media (max-width: 320px) {
+      max-width: calc(100vw - 32px) !important;
+      right: 16px !important;
+    }
+  }
+}
+
+// Fix para el contenedor principal del header
+app-header {
+  width: 100% !important;
+  overflow: visible !important;
+  
+  .mat-toolbar {
+    width: 100% !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+}
+
+// Asegurar que el texto del usuario no se salga
+.user-info {
+  .user-name,
+  .user-email {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}

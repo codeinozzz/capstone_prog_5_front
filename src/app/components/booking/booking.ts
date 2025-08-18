@@ -1,0 +1,172 @@
+// src/app/components/booking/booking.ts
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { BookingService, BookingData } from '../../services/booking.service';
+
+@Component({
+  selector: 'app-booking',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule
+  ],
+  templateUrl: './booking.html',
+  styleUrl: './booking.scss'
+})
+export class BookingComponent {
+  @Input() hotelId: string = '';
+  @Input() hotelName: string = '';
+  @Input() roomId?: string;
+  @Output() bookingCompleted = new EventEmitter<any>();
+
+  bookingForm: FormGroup;
+  isLoading = false;
+  isSuccess = false;
+  confirmationNumber = '';
+
+  constructor(
+    private fb: FormBuilder,
+    private bookingService: BookingService,
+    private snackBar: MatSnackBar
+  ) {
+    this.bookingForm = this.fb.group({
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      phone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]+$/)]],
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  // Obtener errores del campo
+  getFieldError(fieldName: string): string {
+    const field = this.bookingForm.get(fieldName);
+    
+    if (field?.hasError('required')) {
+      return `${this.getFieldLabel(fieldName)} es requerido`;
+    }
+    
+    if (field?.hasError('minlength')) {
+      return `${this.getFieldLabel(fieldName)} debe tener al menos 2 caracteres`;
+    }
+    
+    if (field?.hasError('email')) {
+      return 'Ingresa un email válido';
+    }
+    
+    if (field?.hasError('pattern') && fieldName === 'phone') {
+      return 'Ingresa un teléfono válido';
+    }
+    
+    return '';
+  }
+
+  // Obtener etiqueta del campo
+  private getFieldLabel(fieldName: string): string {
+    const labels: any = {
+      firstName: 'Nombre',
+      lastName: 'Apellido',
+      phone: 'Teléfono',
+      email: 'Email'
+    };
+    return labels[fieldName] || fieldName;
+  }
+
+  // Verificar si el campo tiene errores
+  hasFieldError(fieldName: string): boolean {
+    const field = this.bookingForm.get(fieldName);
+    return !!(field?.invalid && field?.touched);
+  }
+
+  // Enviar formulario
+  onSubmit(): void {
+    if (this.bookingForm.valid && !this.isLoading) {
+      this.isLoading = true;
+
+      const bookingData: BookingData = {
+        ...this.bookingForm.value,
+        hotelId: this.hotelId,
+        roomId: this.roomId
+      };
+
+      this.bookingService.createBooking(bookingData).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          
+          if (response.success) {
+            this.isSuccess = true;
+            this.confirmationNumber = response.data?.confirmationNumber || 'N/A';
+            
+            this.snackBar.open(
+              '¡Reserva creada exitosamente!',
+              'Cerrar',
+              {
+                duration: 3000,
+                panelClass: ['success-snackbar']
+              }
+            );
+
+            this.bookingCompleted.emit(response);
+          } else {
+            this.showError('Error al crear la reserva');
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error creating booking:', error);
+          
+          let errorMessage = 'Error al crear la reserva';
+          if (error.error?.message) {
+            errorMessage = error.error.message;
+          } else if (error.status === 0) {
+            errorMessage = 'No se puede conectar con el servidor';
+          }
+          
+          this.showError(errorMessage);
+        }
+      });
+    } else {
+      // Marcar todos los campos como tocados para mostrar errores
+      this.bookingForm.markAllAsTouched();
+      this.snackBar.open(
+        'Por favor completa todos los campos correctamente',
+        'Cerrar',
+        { duration: 3000 }
+      );
+    }
+  }
+
+  // Mostrar mensaje de error
+  private showError(message: string): void {
+    this.snackBar.open(
+      message,
+      'Cerrar',
+      {
+        duration: 5000,
+        panelClass: ['error-snackbar']
+      }
+    );
+  }
+
+  // Crear nueva reserva
+  newBooking(): void {
+    this.isSuccess = false;
+    this.confirmationNumber = '';
+    this.bookingForm.reset();
+  }
+}

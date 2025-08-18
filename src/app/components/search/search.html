@@ -1,12 +1,36 @@
-<div class="search-box">
+<!-- src/app/components/search/search.html -->
+<div class="search-container">
   <h3>Buscar Hoteles</h3>
-  <input 
-    type="text" 
-    [(ngModel)]="searchText" 
-    placeholder="Buscar por nombre o ubicación">
   
-  <div class="buttons">
-    <button (click)="onSearch()">Buscar</button>
-    <button (click)="onClear()">Limpiar</button>
+  <div class="search-form">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar por ubicación</mat-label>
+      <input 
+        matInput 
+        [(ngModel)]="searchText" 
+        placeholder="Ej: La Paz, Santa Cruz..."
+        (keypress)="onKeyPress($event)">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    
+    <div class="buttons">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="onSearch()"
+        [disabled]="!searchText.trim()">
+        <mat-icon>search</mat-icon>
+        Buscar
+      </button>
+      
+      <button 
+        mat-stroked-button 
+        color="warn" 
+        (click)="onClear()"
+        [disabled]="!searchText">
+        <mat-icon>clear</mat-icon>
+        Limpiar
+      </button>
+    </div>
   </div>
 </div>

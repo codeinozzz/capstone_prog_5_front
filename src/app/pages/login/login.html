@@ -1,57 +1,100 @@
+<!-- src/app/pages/login/login.html -->
 <div class="login-container">
-  <div class="login-card">
-    <h2>Iniciar Sesión</h2>
-    
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      
-      <!-- Campo Email -->
-      <div class="form-group">
-        <label>Email:</label>
-        <input 
-          type="email" 
-          formControlName="email"
-          placeholder="ejemplo@email.com">
-        
-        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" 
-             class="error">
-          {{ getEmailErrorMessage() }}
+  
+  <!-- Loading state -->
+  <div *ngIf="clerkLoading" class="loading-card">
+    <mat-card>
+      <mat-card-content>
+        <div class="loading-content">
+          <mat-spinner diameter="40"></mat-spinner>
+          <h3>Cargando sistema de autenticación...</h3>
+          <p>Por favor espera un momento</p>
         </div>
-      </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
-      <!-- Campo Contraseña -->
-      <div class="form-group">
-        <label>Contraseña:</label>
-        <div class="password-field">
-          <input 
-            [type]="hidePassword ? 'password' : 'text'"
-            formControlName="password"
-            placeholder="Tu contraseña">
-          
-          <button type="button" (click)="togglePasswordVisibility()">
-            {{ hidePassword ? 'see' : 'no' }}
+  <!-- Authentication options -->
+  <div *ngIf="!clerkLoading && !isAuthenticated" class="auth-card">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>hotel</mat-icon>
+          Acceder a Hotel Jala
+        </mat-card-title>
+        <mat-card-subtitle>
+          Inicia sesión o regístrate para continuar
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="auth-buttons">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            class="auth-btn"
+            (click)="openSignIn()">
+            <mat-icon>login</mat-icon>
+            Iniciar Sesión
+          </button>
+
+          <button 
+            mat-raised-button 
+            color="accent" 
+            class="auth-btn"
+            (click)="openSignUp()">
+            <mat-icon>person_add</mat-icon>
+            Crear Cuenta
           </button>
         </div>
-        
-        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" 
-             class="error">
-          {{ getPasswordErrorMessage() }}
+
+        <div class="info-section">
+          <h4>¿Por qué crear una cuenta?</h4>
+          <ul>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              Reservar habitaciones fácilmente
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              Guardar tus hoteles favoritos
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              Gestionar tus reservas
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              Ofertas exclusivas
+            </li>
+          </ul>
         </div>
-      </div>
+      </mat-card-content>
 
-      <!-- Botón Submit -->
-      <button type="submit" [disabled]="loginForm.invalid" class="login-btn">
-        Iniciar Sesión
-      </button>
-
-      <!-- Error general -->
-      <div *ngIf="loginForm.invalid && loginForm.touched" class="form-error">
-        Por favor, corrige los errores del formulario
-      </div>
-    </form>
-
-    <!-- Volver -->
-    <button type="button" onclick="window.history.back()" class="back-btn">
-      ← Volver
-    </button>
+      <mat-card-actions>
+        <button 
+          mat-stroked-button 
+          (click)="goHome()"
+          class="back-btn">
+          <mat-icon>arrow_back</mat-icon>
+          Volver al inicio
+        </button>
+      </mat-card-actions>
+    </mat-card>
   </div>
+
+  <!-- Already authenticated -->
+  <div *ngIf="!clerkLoading && isAuthenticated" class="success-card">
+    <mat-card>
+      <mat-card-content>
+        <div class="success-content">
+          <mat-icon class="success-icon">check_circle</mat-icon>
+          <h3>¡Ya tienes sesión iniciada!</h3>
+          <p>Redirigiendo a la página principal...</p>
+          <mat-spinner diameter="30"></mat-spinner>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
 </div>

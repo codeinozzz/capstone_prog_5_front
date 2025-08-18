@@ -1,0 +1,54 @@
+<!-- src/app/pages/not-found/not-found.html -->
+<app-header></app-header>
+
+<div class="not-found-container">
+  <div class="not-found-content">
+    
+    <!-- Icono y número 404 -->
+    <div class="error-visual">
+      <mat-icon class="hotel-icon">hotel</mat-icon>
+      <h1 class="error-code">404</h1>
+    </div>
+
+    <!-- Mensaje principal -->
+    <h2>¡Ups! Página no encontrada</h2>
+    
+    <p class="error-message">
+      Lo sentimos, la página que buscas no existe o ha sido movida.
+    </p>
+
+    <!-- Sugerencias -->
+    <div class="suggestions">
+      <h3>¿Qué puedes hacer?</h3>
+      <ul>
+        <li>Verificar que la URL esté escrita correctamente</li>
+        <li>Regresar a la página anterior</li>
+        <li>Ir a la página principal</li>
+        <li>Buscar hoteles disponibles</li>
+      </ul>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="goHome()"
+        class="primary-btn">
+        <mat-icon>home</mat-icon>
+        Ir al Inicio
+      </button>
+
+      <button 
+        mat-button 
+        (click)="goBack()"
+        class="secondary-btn">
+        <mat-icon>arrow_back</mat-icon>
+        Regresar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<app-footer></app-footer>

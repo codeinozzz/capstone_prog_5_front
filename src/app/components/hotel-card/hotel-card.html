@@ -1,7 +1,57 @@
-<div class="card">
-  <img [src]="hotel.image" [alt]="hotel.name" class="hotel-image">
-  <h3>{{ hotel.name }}</h3>
-  <p>{{ hotel.location }}</p>
-  <p class="price">${{ hotel.price }} por noche</p>
-  <button (click)="onReservar()">Reservar</button>
-</div>
+<!-- src/app/components/hotel-card/hotel-card.html -->
+<mat-card class="hotel-card">
+  <img 
+    mat-card-image 
+    [src]="hotel.image" 
+    [alt]="hotel.name" 
+    class="hotel-image">
+  
+  <mat-card-header>
+    <mat-card-title>{{ hotel.name }}</mat-card-title>
+    <mat-card-subtitle>
+      <mat-icon>location_on</mat-icon>
+      {{ hotel.location }}
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p class="description">{{ hotel.description }}</p>
+    
+    <!-- Rating con estrellas -->
+    <div class="rating" *ngIf="hotel.rating">
+      <span class="stars">
+        <mat-icon 
+          *ngFor="let star of getStars()" 
+          [class.filled]="star === 1">
+          {{ star === 1 ? 'star' : 'star_border' }}
+        </mat-icon>
+      </span>
+      <span class="rating-text">({{ hotel.rating }}/5)</span>
+    </div>
+
+    <!-- Amenidades -->
+    <div class="amenities" *ngIf="hotel.amenities.length > 0">
+      <mat-chip-set>
+        <mat-chip *ngFor="let amenity of getDisplayAmenities()">
+          {{ amenity }}
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+
+    <!-- Precio -->
+    <div class="price" *ngIf="hotel.price">
+      <strong>${{ hotel.price }}</strong> por noche
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onReservar()"
+      class="reserve-btn">
+      <mat-icon>hotel</mat-icon>
+      Reservar
+    </button>
+  </mat-card-actions>
+</mat-card>

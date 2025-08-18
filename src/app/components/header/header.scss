@@ -1,32 +1,255 @@
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  background: white;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+/* src/app/components/header/header.scss */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0 16px;
+  
+  // Brand section
+  .brand-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    mat-icon {
+      font-size: 28px;
+      height: 28px;
+      width: 28px;
+    }
+
+    .brand-text {
+      font-size: 20px;
+      font-weight: 500;
+      color: white;
+    }
+  }
+
+  // Spacer
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  // Search container
+  .search-container {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    padding: 8px 16px;
+    gap: 8px;
+    min-width: 300px;
+    max-width: 400px;
+
+    mat-icon {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
+
+    .search-input {
+      background: none;
+      border: none;
+      outline: none;
+      color: white;
+      font-size: 14px;
+      flex: 1;
+      
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+
+  // Auth section
+  .auth-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .auth-loading {
+      padding: 8px;
+    }
+
+    .auth-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .auth-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        
+        mat-icon {
+          font-size: 18px;
+          height: 18px;
+          width: 18px;
+        }
+      }
+    }
+
+    // User menu
+    .user-menu {
+      .user-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 24px;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+          mat-icon {
+            font-size: 32px;
+            height: 32px;
+            width: 32px;
+            color: rgba(255, 255, 255, 0.9);
+          }
+        }
+
+        .user-info {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          text-align: left;
+
+          .user-name {
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 1.2;
+          }
+
+          .user-email {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            line-height: 1.2;
+          }
+        }
+      }
+    }
+  }
 }
 
-h1 {
-  color: #4caf50;
-  margin: 0;
-  cursor: pointer;
+// User dropdown menu styles
+:host ::ng-deep {
+  .user-dropdown {
+    min-width: 250px;
+    
+    .menu-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid #eee;
+
+      mat-icon {
+        font-size: 40px;
+        height: 40px;
+        width: 40px;
+        color: #4caf50;
+      }
+
+      .menu-user-info {
+        display: flex;
+        flex-direction: column;
+
+        .menu-user-name {
+          font-weight: 500;
+          color: #333;
+          font-size: 14px;
+        }
+
+        .menu-user-email {
+          color: #666;
+          font-size: 12px;
+        }
+      }
+    }
+
+    .mat-mdc-menu-item {
+      height: 48px;
+      
+      mat-icon {
+        margin-right: 12px;
+        font-size: 20px;
+        height: 20px;
+        width: 20px;
+        color: #666;
+      }
+
+      &.logout-item {
+        color: #f44336;
+        
+        mat-icon {
+          color: #f44336;
+        }
+      }
+    }
+
+    // Separador manual para reemplazar mat-divider
+    .menu-separator {
+      height: 1px;
+      background-color: #eee;
+      margin: 8px 0;
+    }
+  }
 }
 
-input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  flex: 1;
-  max-width: 300px;
-  margin: 0 20px;
+// Responsive design
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 8px;
+
+    .brand-button {
+      padding: 4px 8px;
+
+      .brand-text {
+        font-size: 18px;
+      }
+    }
+
+    .search-container {
+      display: none; // Hide search on mobile
+    }
+
+    .auth-section {
+      .auth-buttons {
+        .button-text {
+          display: none; // Hide button text on mobile
+        }
+      }
+
+      .user-menu {
+        .user-button {
+          .user-info {
+            display: none; // Hide user info on mobile
+          }
+        }
+      }
+    }
+  }
 }
 
-button {
-  background: #4caf50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+@media (max-width: 480px) {
+  .app-header {
+    .auth-section {
+      .auth-buttons {
+        gap: 4px;
+      }
+    }
+  }
 }

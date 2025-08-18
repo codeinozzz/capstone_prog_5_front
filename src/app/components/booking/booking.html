@@ -1,0 +1,130 @@
+<!-- src/app/components/booking/booking.html -->
+<mat-card class="booking-card">
+  
+  <!-- Título -->
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon>hotel</mat-icon>
+      Reservar Habitación
+    </mat-card-title>
+    <mat-card-subtitle *ngIf="hotelName">
+      {{ hotelName }}
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    
+    <!-- Formulario de reserva -->
+    <div *ngIf="!isSuccess" class="booking-form">
+      <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Nombre -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre</mat-label>
+          <input 
+            matInput 
+            formControlName="firstName"
+            placeholder="Ingresa tu nombre">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="hasFieldError('firstName')">
+            {{ getFieldError('firstName') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Apellido -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Apellido</mat-label>
+          <input 
+            matInput 
+            formControlName="lastName"
+            placeholder="Ingresa tu apellido">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="hasFieldError('lastName')">
+            {{ getFieldError('lastName') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Teléfono -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Teléfono</mat-label>
+          <input 
+            matInput 
+            formControlName="phone"
+            placeholder="Ej: +591 12345678">
+          <mat-icon matSuffix>phone</mat-icon>
+          <mat-error *ngIf="hasFieldError('phone')">
+            {{ getFieldError('phone') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo Electrónico</mat-label>
+          <input 
+            matInput 
+            type="email"
+            formControlName="email"
+            placeholder="ejemplo@email.com">
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="hasFieldError('email')">
+            {{ getFieldError('email') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Botón de envío -->
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          class="submit-btn"
+          [disabled]="isLoading">
+          
+          <span *ngIf="!isLoading">
+            <mat-icon>book_online</mat-icon>
+            Confirmar Reserva
+          </span>
+          
+          <span *ngIf="isLoading" class="loading-content">
+            <mat-spinner diameter="20"></mat-spinner>
+            Procesando...
+          </span>
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Mensaje de éxito -->
+    <div *ngIf="isSuccess" class="success-content">
+      <div class="success-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      
+      <h3>¡Reserva Confirmada!</h3>
+      
+      <p>Tu reserva ha sido creada exitosamente</p>
+      
+      <div class="confirmation-details">
+        <div class="detail-item">
+          <mat-icon>confirmation_number</mat-icon>
+          <span>Número de confirmación: <strong>{{ confirmationNumber }}</strong></span>
+        </div>
+        
+        <div class="detail-item" *ngIf="hotelName">
+          <mat-icon>hotel</mat-icon>
+          <span>Hotel: <strong>{{ hotelName }}</strong></span>
+        </div>
+      </div>
+
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="newBooking()"
+        class="new-booking-btn">
+        <mat-icon>add</mat-icon>
+        Nueva Reserva
+      </button>
+    </div>
+
+  </mat-card-content>
+
+</mat-card>

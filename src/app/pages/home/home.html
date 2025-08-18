@@ -1,11 +1,62 @@
+<!-- src/app/pages/home/home.html -->
 <app-header></app-header>
 
 <div class="main-content">
   <h2>Hoteles Disponibles</h2>
   
-  <div class="hotels-grid">
+  <!-- Search Component -->
+  <app-search 
+    (searchTerm)="onSearch($event)"
+    (clearSearch)="onClearSearch()">
+  </app-search>
+  
+  <!-- Search Results Info -->
+  <div *ngIf="isSearching && !loading && !error" class="search-info">
+    <p>
+      <mat-icon>search</mat-icon>
+      Resultados para: "<strong>{{ searchTerm }}</strong>" 
+      ({{ hotels.length }} {{ hotels.length === 1 ? 'hotel encontrado' : 'hoteles encontrados' }})
+    </p>
+  </div>
+  
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Cargando hoteles...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h3>¡Ups! Algo salió mal</h3>
+    <p>{{ error }}</p>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="retryLoadHotels()">
+      <mat-icon>refresh</mat-icon>
+      Reintentar
+    </button>
+  </div>
+
+  <!-- No Hotels State -->
+  <div *ngIf="!loading && !error && hotels.length === 0" class="no-hotels-container">
+    <mat-icon class="no-hotels-icon">hotel</mat-icon>
+    <h3>No hay hoteles disponibles</h3>
+    <p>No se encontraron hoteles en este momento.</p>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="retryLoadHotels()">
+      <mat-icon>refresh</mat-icon>
+      Actualizar
+    </button>
+  </div>
+
+  <!-- Hotels Grid -->
+  <div *ngIf="!loading && !error && hotels.length > 0" class="hotels-grid">
     <app-hotel-card 
-      *ngFor="let hotel of hotels"
+      *ngFor="let hotel of hotels; trackBy: trackByHotelId"
       [hotel]="hotel"
       (hotelClicked)="onHotelReservado($event)">
     </app-hotel-card>

@@ -1,61 +1,115 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+// src/app/pages/login/login.ts
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+import { ClerkService } from '../../services/clerk.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule, 
+    MatButtonModule, 
+    MatCardModule, 
+    MatIconModule, 
+    MatProgressSpinnerModule,
+    MatSnackBarModule
+  ],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
-export class LoginComponent {
-  loginForm: FormGroup;
-  hidePassword = true;
+export class LoginComponent implements OnInit {
+  clerkLoading = true;
+  isAuthenticated = false;
 
-  constructor(private fb: FormBuilder) {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+  constructor(
+    private clerkService: ClerkService,
+    private router: Router,
+    private snackBar: MatSnackBar
+  ) {}
+
+  ngOnInit() {
+    // Verificar si Clerk ya está cargado
+    this.clerkService.clerkLoaded$.subscribe(loaded => {
+      this.clerkLoading = !loaded;
+      if (loaded) {
+        this.checkAuthAndRedirect();
+      }
+    });
+
+    // Escuchar cambios en autenticación
+    this.clerkService.isAuthenticated$.subscribe(authenticated => {
+      this.isAuthenticated = authenticated;
+      if (authenticated) {
+        this.handleLoginSuccess();
+      }
     });
   }
 
-  // Obtener errores del email
-  getEmailErrorMessage(): string {
-    if (this.loginForm.get('email')?.hasError('required')) {
-      return 'El email es requerido';
+  private checkAuthAndRedirect(): void {
+    if (this.clerkService.authenticated) {
+      this.router.navigate(['/']);
     }
-    if (this.loginForm.get('email')?.hasError('email')) {
-      return 'Ingresa un email válido';
-    }
-    return '';
   }
 
-  // Obtener errores de la contraseña
-  getPasswordErrorMessage(): string {
-    if (this.loginForm.get('password')?.hasError('required')) {
-      return 'La contraseña es requerida';
+  // Abrir modal de inicio de sesión
+  openSignIn(): void {
+    try {
+      this.clerkService.openSignIn();
+    } catch (error) {
+      this.handleAuthError('Error al abrir el modal de inicio de sesión');
     }
-    if (this.loginForm.get('password')?.hasError('minlength')) {
-      return 'La contraseña debe tener al menos 6 caracteres';
-    }
-    return '';
   }
 
-  // Alternar visibilidad de contraseña
-  togglePasswordVisibility() {
-    this.hidePassword = !this.hidePassword;
+  // Abrir modal de registro
+  openSignUp(): void {
+    try {
+      this.clerkService.openSignUp();
+    } catch (error) {
+      this.handleAuthError('Error al abrir el modal de registro');
+    }
   }
 
-  // Enviar formulario
-  onSubmit() {
-    if (this.loginForm.valid) {
-      const formData = this.loginForm.value;
-      console.log('Login exitoso:', formData);
-      alert(`¡Bienvenido! Email: ${formData.email}`);
-    } else {
-      console.log('Formulario inválido');
-      this.loginForm.markAllAsTouched();
+  // Manejar login exitoso
+  private handleLoginSuccess(): void {
+    const user = this.clerkService.user;
+    if (user) {
+      this.snackBar.open(
+        `¡Bienvenido, ${user.firstName || user.emailAddresses[0]?.emailAddress}!`,
+        'Cerrar',
+        {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        }
+      );
+      
+      // Redireccionar a la página principal
+      setTimeout(() => {
+        this.router.navigate(['/']);
+      }, 1000);
     }
+  }
+
+  // Manejar errores de autenticación
+  private handleAuthError(message: string): void {
+    this.snackBar.open(
+      message,
+      'Cerrar',
+      {
+        duration: 5000,
+        panelClass: ['error-snackbar']
+      }
+    );
+  }
+
+  // Volver a la página principal
+  goHome(): void {
+    this.router.navigate(['/']);
   }
 }

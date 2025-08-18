@@ -1,46 +1,112 @@
-.card {
-  border: 1px solid #ddd;
-  padding: 15px;
-  background: white;
-  border-radius: 5px;
-  text-align: center;
-  overflow: hidden; 
+/* src/app/components/hotel-card/hotel-card.scss */
+.hotel-card {
+  max-width: 400px;
+  margin: 16px;
+  
+  .hotel-image {
+    height: 200px;
+    object-fit: cover;
+  }
+
+  mat-card-header {
+    mat-card-title {
+      color: #4caf50;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    mat-card-subtitle {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #666;
+
+      mat-icon {
+        font-size: 16px;
+        height: 16px;
+        width: 16px;
+      }
+    }
+  }
+
+  mat-card-content {
+    .description {
+      color: #666;
+      font-size: 14px;
+      margin: 8px 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+
+      .stars {
+        display: flex;
+        align-items: center;
+
+        mat-icon {
+          font-size: 18px;
+          height: 18px;
+          width: 18px;
+          color: #ddd;
+
+          &.filled {
+            color: #ffc107;
+          }
+        }
+      }
+
+      .rating-text {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+
+    .amenities {
+      margin: 12px 0;
+
+      mat-chip-set {
+        mat-chip {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .price {
+      color: #4caf50;
+      font-size: 16px;
+      font-weight: 500;
+      margin: 12px 0;
+
+      strong {
+        font-size: 18px;
+      }
+    }
+  }
+
+  mat-card-actions {
+    padding: 16px;
+
+    .reserve-btn {
+      width: 100%;
+      
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
 }
 
-.hotel-image {
-  width: 100%;
-  height: 200px; 
-  object-fit: cover; 
-  border-radius: 5px;
-  margin-bottom: 15px;
-}
-
-h3 {
-  color: #4caf50;
-  margin: 0 0 10px 0;
-}
-
-p {
-  margin: 5px 0;
-  color: #666;
-}
-
-.price {
-  font-weight: bold;
-  color: #4caf50;
-  font-size: 18px;
-}
-
-button {
-  background: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-button:hover {
-  background: #45a049;
+// Responsive
+@media (max-width: 768px) {
+  .hotel-card {
+    margin: 8px;
+    max-width: 100%;
+  }
 }

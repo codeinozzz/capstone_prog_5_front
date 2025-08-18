@@ -1,5 +1,113 @@
-<div class="header">
-  <h1 onclick="window.location.href='/'">Hotel Jala</h1>
-  <input type="text" placeholder="Search Room">
-  <button onclick="window.location.href='/login'">Login</button>
-</div>
+<!-- src/app/components/header/header.html - VERSIÓN ALTERNATIVA SIMPLE -->
+<mat-toolbar color="primary" class="app-header">
+  
+  <!-- Logo/Brand - Lado izquierdo -->
+  <div class="header-left">
+    <button 
+      mat-button 
+      class="brand-button"
+      (click)="goHome()">
+      <mat-icon>hotel</mat-icon>
+      <span class="brand-text">Hotel Jala</span>
+    </button>
+  </div>
+
+  <!-- Centro con búsqueda -->
+  <div class="header-center">
+    <div class="search-container">
+      <mat-icon>search</mat-icon>
+      <input 
+        type="text" 
+        placeholder="Buscar hoteles..."
+        class="search-input">
+    </div>
+  </div>
+
+  <!-- Lado derecho - Auth -->
+  <div class="header-right">
+    
+    <!-- Loading state -->
+    <ng-container *ngIf="clerkLoading">
+      <div class="auth-loading">
+        <mat-spinner diameter="24"></mat-spinner>
+      </div>
+    </ng-container>
+
+    <!-- Not authenticated -->
+    <ng-container *ngIf="!clerkLoading && !isAuthenticated">
+      <div class="auth-buttons">
+        <button 
+          mat-button 
+          class="auth-btn signin-btn"
+          (click)="openSignIn()">
+          <mat-icon>login</mat-icon>
+          <span class="button-text">Iniciar</span>
+        </button>
+        
+        <button 
+          mat-raised-button 
+          class="auth-btn signup-btn"
+          (click)="goToLogin()">
+          <mat-icon>person_add</mat-icon>
+          <span class="button-text">Registro</span>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- Authenticated - Versión simplificada -->
+    <ng-container *ngIf="!clerkLoading && isAuthenticated">
+      <div class="user-section">
+        <button 
+          mat-button 
+          [matMenuTriggerFor]="userMenu"
+          class="user-btn">
+          <mat-icon class="user-icon">account_circle</mat-icon>
+          <span class="user-name-short">{{ getDisplayName() }}</span>
+          <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
+        </button>
+
+        <!-- Dropdown simplificado -->
+        <mat-menu #userMenu="matMenu" class="user-dropdown" xPosition="before">
+          <div class="menu-user-header">
+            <div class="menu-user-avatar">
+              <mat-icon>account_circle</mat-icon>
+            </div>
+            <div class="menu-user-details">
+              <div class="menu-display-name">{{ getDisplayName() }}</div>
+              <div class="menu-email">{{ getEmail() }}</div>
+            </div>
+          </div>
+          
+          <div class="menu-divider"></div>
+          
+          <button mat-menu-item>
+            <mat-icon>person</mat-icon>
+            <span>Mi Perfil</span>
+          </button>
+          
+          <button mat-menu-item>
+            <mat-icon>book_online</mat-icon>
+            <span>Mis Reservas</span>
+          </button>
+          
+          <button mat-menu-item>
+            <mat-icon>favorite</mat-icon>
+            <span>Favoritos</span>
+          </button>
+          
+          <div class="menu-divider"></div>
+          
+          <button 
+            mat-menu-item 
+            (click)="signOut()"
+            class="logout-option">
+            <mat-icon>logout</mat-icon>
+            <span>Cerrar Sesión</span>
+          </button>
+        </mat-menu>
+      </div>
+    </ng-container>
+
+  </div>
+
+</mat-toolbar>

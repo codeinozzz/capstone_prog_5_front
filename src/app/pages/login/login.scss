@@ -1,102 +1,209 @@
+/* src/app/pages/login/login.scss */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f5f5f5;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+  padding: 20px;
 }
 
-.login-card {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+// Common card styles
+.loading-card,
+.auth-card,
+.success-card {
   width: 100%;
-  max-width: 400px;
-}
+  max-width: 450px;
 
-h2 {
-  text-align: center;
-  color: #4caf50;
-  margin-bottom: 20px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-input:focus {
-  border-color: #4caf50;
-  outline: none;
-}
-
-.password-field {
-  display: flex;
-  
-  input {
-    flex: 1;
+  mat-card {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
   }
-  
-  button {
-    background: none;
-    border: 1px solid #ddd;
-    border-left: none;
+}
+
+// Loading state
+.loading-content {
+  text-align: center;
+  padding: 40px 20px;
+
+  mat-spinner {
+    margin: 0 auto 20px;
+  }
+
+  h3 {
+    color: #4caf50;
+    margin: 0 0 10px 0;
+    font-weight: 500;
+  }
+
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+// Auth card
+.auth-card {
+  mat-card-header {
+    text-align: center;
+    padding: 24px 24px 16px;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #4caf50;
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+
+      mat-icon {
+        font-size: 28px;
+        height: 28px;
+        width: 28px;
+      }
+    }
+
+    mat-card-subtitle {
+      color: #666;
+      font-size: 14px;
+    }
+  }
+
+  mat-card-content {
+    padding: 16px 24px;
+
+    .auth-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+
+      .auth-btn {
+        height: 48px;
+        font-size: 16px;
+        font-weight: 500;
+
+        mat-icon {
+          margin-right: 8px;
+        }
+      }
+    }
+
+    .info-section {
+      h4 {
+        color: #333;
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0 0 16px 0;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 0;
+          color: #666;
+          font-size: 14px;
+
+          mat-icon {
+            color: #4caf50;
+            font-size: 18px;
+            height: 18px;
+            width: 18px;
+          }
+        }
+      }
+    }
+  }
+
+  mat-card-actions {
+    padding: 16px 24px 24px;
+    justify-content: center;
+
+    .back-btn {
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+// Success state
+.success-content {
+  text-align: center;
+  padding: 40px 20px;
+
+  .success-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    color: #4caf50;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    color: #4caf50;
+    margin: 0 0 10px 0;
+    font-weight: 500;
+  }
+
+  p {
+    color: #666;
+    margin: 0 0 20px 0;
+  }
+
+  mat-spinner {
+    margin: 0 auto;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .login-container {
     padding: 10px;
-    cursor: pointer;
+  }
+
+  .loading-card,
+  .auth-card,
+  .success-card {
+    max-width: 100%;
+  }
+
+  .auth-card {
+    mat-card-header {
+      padding: 20px 16px 12px;
+
+      mat-card-title {
+        font-size: 1.3rem;
+      }
+    }
+
+    mat-card-content {
+      padding: 12px 16px;
+    }
+
+    mat-card-actions {
+      padding: 12px 16px 20px;
+    }
   }
 }
 
-.login-btn {
-  width: 100%;
-  background: #4caf50;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 10px;
-}
+// Global styles for snackbars
+:host ::ng-deep {
+  .success-snackbar {
+    background-color: #4caf50 !important;
+    color: white !important;
+  }
 
-.login-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.error {
-  color: red;
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-.form-error {
-  color: red;
-  text-align: center;
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-.back-btn {
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  margin-top: 15px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  .error-snackbar {
+    background-color: #f44336 !important;
+    color: white !important;
+  }
 }

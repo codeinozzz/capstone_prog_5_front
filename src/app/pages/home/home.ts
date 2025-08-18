@@ -1,42 +1,148 @@
-import { Component } from '@angular/core';
+// src/app/pages/home/home.ts - CORREGIDO
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
 import { HeaderComponent } from '../../components/header/header';
 import { FooterComponent } from '../../components/footer/footer';
-import { HotelCardComponent, Hotel } from '../../components/hotel-card/hotel-card';
+import { HotelCardComponent } from '../../components/hotel-card/hotel-card';
+import { SearchComponent } from '../../components/search/search';
+import { HotelService, Hotel } from '../../services/hotel.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent, HotelCardComponent],
+  imports: [
+    CommonModule, 
+    HeaderComponent, 
+    FooterComponent, 
+    HotelCardComponent,
+    SearchComponent,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatButtonModule,
+    MatIconModule
+  ],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
-export class HomeComponent {
-  hotels: Hotel[] = [
-    {
-      id: 1,
-      name: 'Hotel Conchitas',
-      location: 'La Paz, Bolivia',
-      price: 120,
-      image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'
-    },
-    {
-      id: 2,
-      name: 'Hotel Rosario',
-      location: 'Centro, La Paz',
-      price: 85,
-      image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop'
-    },
-    {
-      id: 3,
-      name: 'Hotel Casa Grande',
-      location: 'Zona Sur, La Paz',
-      price: 150,
-      image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop'
-    }
-  ];
+export class HomeComponent implements OnInit {
+  hotels: Hotel[] = [];
+  loading = false;
+  error: string | null = null;
+  isSearching = false;
+  searchTerm = '';
 
+  constructor(
+    private hotelService: HotelService,
+    private snackBar: MatSnackBar
+  ) {}
+
+  ngOnInit() {
+    this.loadHotels();
+  }
+
+  // Cargar hoteles desde la API
+  loadHotels() {
+    this.loading = true;
+    this.error = null;
+
+    this.hotelService.getHotels().subscribe({
+      next: (hotels) => {
+        this.hotels = hotels;
+        this.loading = false;
+        console.log('Hoteles cargados:', hotels);
+      },
+      error: (error) => {
+        this.error = error.message;
+        this.loading = false;
+        console.error('Error cargando hoteles:', error);
+        
+        // Mostrar error en snackbar
+        this.snackBar.open(
+          'Error al cargar hoteles: ' + error.message, 
+          'Cerrar', 
+          {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          }
+        );
+      }
+    });
+  }
+
+  // Reintentar cargar hoteles
+  retryLoadHotels() {
+    this.loadHotels();
+  }
+
+  // Manejar click en hotel - CORREGIDO
   onHotelReservado(hotel: Hotel) {
-    alert(`Reserva para: ${hotel.name} - $${hotel.price}/noche`);
+    const snackBarRef = this.snackBar.open(
+      `Interesado en: ${hotel.name} - $${hotel.price}/noche`, 
+      'Ver más', 
+      {
+        duration: 3000
+      }
+    );
+
+    // Escuchar click en la acción
+    snackBarRef.onAction().subscribe(() => {
+      console.log('Ver más detalles de:', hotel);
+      // Aquí podrías navegar a detalle del hotel
+    });
+  }
+
+  // TrackBy function para mejor performance
+  trackByHotelId(index: number, hotel: Hotel): string {
+    return hotel.id;
+  }
+
+  // Buscar hoteles por ubicación
+  onSearch(term: string) {
+    this.searchTerm = term;
+    this.isSearching = true;
+    this.loading = true;
+    this.error = null;
+
+    this.hotelService.searchHotels(term).subscribe({
+      next: (hotels) => {
+        this.hotels = hotels;
+        this.loading = false;
+        console.log('Hoteles encontrados:', hotels);
+        
+        if (hotels.length === 0) {
+          this.snackBar.open(
+            `No se encontraron hoteles en "${term}"`, 
+            'Cerrar', 
+            { duration: 3000 }
+          );
+        }
+      },
+      error: (error) => {
+        this.error = error.message;
+        this.loading = false;
+        console.error('Error en búsqueda:', error);
+        
+        this.snackBar.open(
+          'Error en la búsqueda: ' + error.message, 
+          'Cerrar', 
+          {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          }
+        );
+      }
+    });
+  }
+
+  // Limpiar búsqueda y volver a mostrar todos los hoteles
+  onClearSearch() {
+    this.searchTerm = '';
+    this.isSearching = false;
+    this.loadHotels();
   }
 }
