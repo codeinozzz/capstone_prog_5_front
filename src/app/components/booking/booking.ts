@@ -28,7 +28,7 @@ import { BookingService, BookingData } from '../../services/booking.service';
   templateUrl: './booking.html',
   styleUrl: './booking.scss'
 })
-export class BookingComponent {
+export class BookingComponent implements CanComponentDeactivate {
   @Input() hotelId: string = '';
   @Input() hotelName: string = '';
   @Input() roomId?: string;
@@ -136,7 +136,6 @@ export class BookingComponent {
         }
       });
     } else {
-      // Marcar todos los campos como tocados para mostrar errores
       this.bookingForm.markAllAsTouched();
       this.snackBar.open(
         'Por favor completa todos los campos correctamente',
@@ -146,7 +145,6 @@ export class BookingComponent {
     }
   }
 
-  // Mostrar mensaje de error
   private showError(message: string): void {
     this.snackBar.open(
       message,
@@ -158,23 +156,25 @@ export class BookingComponent {
     );
   }
 
-  // Crear nueva reserva
   newBooking(): void {
     this.isSuccess = false;
     this.confirmationNumber = '';
     this.bookingForm.reset();
   }
 
-
+  // Implementar el guard correctamente
   canDeactivate(): boolean {
+    // Si la reserva fue exitosa, permitir salir
     if (this.isSuccess) {
       return true;
     }
 
+    // Si el formulario tiene cambios y no está cargando, preguntar al usuario
     if (this.bookingForm.dirty && !this.isLoading) {
-      return false; 
+      return false; // El guard mostrará el confirm
     }
 
+    // En cualquier otro caso, permitir salir
     return true;
   }
 }

@@ -1,3 +1,4 @@
+// src/app/guards/can-deactivate.guard.ts - MEJORADO
 import { Injectable } from '@angular/core';
 import { CanDeactivate } from '@angular/router';
 
@@ -9,10 +10,31 @@ export interface CanComponentDeactivate {
   providedIn: 'root'
 })
 export class CanDeactivateGuard implements CanDeactivate<CanComponentDeactivate> {
+  
   canDeactivate(component: CanComponentDeactivate): boolean {
-    if (component.canDeactivate && !component.canDeactivate()) {
-      return confirm('¿Estás seguro de que quieres salir? Los datos no guardados se perderán.');
+    console.log('🛡️ Guard ejecutándose...');
+    
+    // Verificar si el componente tiene el método canDeactivate
+    if (!component || typeof component.canDeactivate !== 'function') {
+      console.log('⚠️ Componente no implementa canDeactivate correctamente');
+      return true;
     }
+
+    // Obtener la decisión del componente
+    const canLeave = component.canDeactivate();
+    console.log('📝 Componente dice que puede salir:', canLeave);
+
+    // Si el componente dice que NO puede salir, mostrar confirmación
+    if (!canLeave) {
+      const userConfirms = confirm(
+        '¿Estás seguro de que quieres salir?\n\nTienes cambios sin guardar que se perderán.'
+      );
+      console.log('👤 Usuario confirmó:', userConfirms);
+      return userConfirms;
+    }
+
+    // Si el componente dice que SÍ puede salir, permitir
+    console.log('✅ Permitiendo navegación');
     return true;
   }
 }

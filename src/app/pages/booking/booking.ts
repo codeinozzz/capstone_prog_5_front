@@ -1,5 +1,5 @@
-// src/app/pages/booking/booking.ts - CORREGIDO SIMPLE
-import { Component, OnInit } from '@angular/core';
+// src/app/pages/booking/booking.ts - CORREGIDO CON GUARD
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -10,6 +10,7 @@ import { HeaderComponent } from '../../components/header/header';
 import { FooterComponent } from '../../components/footer/footer';
 import { BookingComponent } from '../../components/booking/booking';
 import { HotelService, Hotel } from '../../services/hotel.service';
+import { CanComponentDeactivate } from '../../guards/can-deactivate.guard';
 
 @Component({
   selector: 'app-booking-page',
@@ -26,11 +27,13 @@ import { HotelService, Hotel } from '../../services/hotel.service';
   templateUrl: './booking.html',
   styleUrl: './booking.scss'
 })
-export class BookingPageComponent implements OnInit {
+export class BookingPageComponent implements OnInit, CanComponentDeactivate {
+  @ViewChild(BookingComponent) bookingComponent!: BookingComponent;
+  
   hotel: Hotel | null = null;
   hotelId: string = '';
   roomId?: string;
-  loading = true;  // Cambiado de 'loading' para coincidir con template
+  loading = true;
   error: string | null = null;
 
   constructor(
@@ -67,13 +70,22 @@ export class BookingPageComponent implements OnInit {
     });
   }
 
-  // Método que espera el template
   onBookingCompleted(bookingResponse: any) {
     console.log('Booking completed:', bookingResponse);
   }
 
-  // Método que espera el template
   goBack() {
     this.router.navigate(['/']);
+  }
+
+  // Implementar el guard
+  canDeactivate(): boolean {
+    // Si el componente hijo no está cargado aún, permitir salir
+    if (!this.bookingComponent) {
+      return true;
+    }
+    
+    // Consultar al componente hijo
+    return this.bookingComponent.canDeactivate();
   }
 }
