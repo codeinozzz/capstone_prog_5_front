@@ -1,4 +1,3 @@
-// src/app/components/booking/booking.ts
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -9,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { CanComponentDeactivate } from '../../guards/can-deactivate.guard';
 import { BookingService, BookingData } from '../../services/booking.service';
 
 @Component({
@@ -53,30 +52,28 @@ export class BookingComponent {
     });
   }
 
-  // Obtener errores del campo
   getFieldError(fieldName: string): string {
     const field = this.bookingForm.get(fieldName);
-    
+
     if (field?.hasError('required')) {
       return `${this.getFieldLabel(fieldName)} es requerido`;
     }
-    
+
     if (field?.hasError('minlength')) {
       return `${this.getFieldLabel(fieldName)} debe tener al menos 2 caracteres`;
     }
-    
+
     if (field?.hasError('email')) {
       return 'Ingresa un email válido';
     }
-    
+
     if (field?.hasError('pattern') && fieldName === 'phone') {
       return 'Ingresa un teléfono válido';
     }
-    
+
     return '';
   }
 
-  // Obtener etiqueta del campo
   private getFieldLabel(fieldName: string): string {
     const labels: any = {
       firstName: 'Nombre',
@@ -87,13 +84,11 @@ export class BookingComponent {
     return labels[fieldName] || fieldName;
   }
 
-  // Verificar si el campo tiene errores
   hasFieldError(fieldName: string): boolean {
     const field = this.bookingForm.get(fieldName);
     return !!(field?.invalid && field?.touched);
   }
 
-  // Enviar formulario
   onSubmit(): void {
     if (this.bookingForm.valid && !this.isLoading) {
       this.isLoading = true;
@@ -107,11 +102,11 @@ export class BookingComponent {
       this.bookingService.createBooking(bookingData).subscribe({
         next: (response) => {
           this.isLoading = false;
-          
+
           if (response.success) {
             this.isSuccess = true;
             this.confirmationNumber = response.data?.confirmationNumber || 'N/A';
-            
+
             this.snackBar.open(
               '¡Reserva creada exitosamente!',
               'Cerrar',
@@ -129,14 +124,14 @@ export class BookingComponent {
         error: (error) => {
           this.isLoading = false;
           console.error('Error creating booking:', error);
-          
+
           let errorMessage = 'Error al crear la reserva';
           if (error.error?.message) {
             errorMessage = error.error.message;
           } else if (error.status === 0) {
             errorMessage = 'No se puede conectar con el servidor';
           }
-          
+
           this.showError(errorMessage);
         }
       });
@@ -168,5 +163,18 @@ export class BookingComponent {
     this.isSuccess = false;
     this.confirmationNumber = '';
     this.bookingForm.reset();
+  }
+
+
+  canDeactivate(): boolean {
+    if (this.isSuccess) {
+      return true;
+    }
+
+    if (this.bookingForm.dirty && !this.isLoading) {
+      return false; 
+    }
+
+    return true;
   }
 }

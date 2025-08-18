@@ -1,4 +1,3 @@
-// src/app/components/header/header.ts - CON NAVEGACIÓN SIMPLE
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -15,7 +14,7 @@ import { ClerkService, ClerkUser } from '../../services/clerk.service';
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule, // Agregado para routerLink
+    RouterModule,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
@@ -49,6 +48,14 @@ export class HeaderComponent implements OnInit {
     });
   }
 
+  goHome(): void {
+    this.router.navigate(['/']);
+  }
+
+  goToLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
   openSignIn(): void {
     this.clerkService.openSignIn();
   }
@@ -76,6 +83,7 @@ export class HeaderComponent implements OnInit {
     return email ? email.split('@')[0] : 'Usuario';
   }
 
+  // Obtener email
   getEmail(): string {
     return this.currentUser?.emailAddresses[0]?.emailAddress || '';
   }

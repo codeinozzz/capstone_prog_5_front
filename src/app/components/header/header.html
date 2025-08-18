@@ -1,4 +1,4 @@
-<!-- src/app/components/header/header.html - CON NAVEGACIÓN SIMPLE -->
+<!-- src/app/components/header/header.html - CÓDIGO COMPLETO -->
 <mat-toolbar color="primary" class="app-header">
   
   <!-- Logo/Brand - Lado izquierdo -->
@@ -12,18 +12,30 @@
     </button>
   </div>
 
-  <!-- Navegación simple -->
+  <!-- Enlaces de navegación -->
   <div class="header-center">
-    <button mat-button routerLink="/" class="nav-link">
+    <button 
+      mat-button 
+      routerLink="/" 
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: true}"
+      class="nav-link">
       <mat-icon>home</mat-icon>
       <span>Inicio</span>
     </button>
     
-    <button mat-button routerLink="/hotels" class="nav-link">
+    <button 
+      mat-button 
+      routerLink="/hotels" 
+      routerLinkActive="active"
+      class="nav-link">
       <mat-icon>hotel</mat-icon>
       <span>Hoteles</span>
     </button>
   </div>
+
+  <!-- Spacer para empujar contenido a la derecha -->
+  <div class="spacer"></div>
 
   <!-- Lado derecho - Auth -->
   <div class="header-right">
@@ -56,7 +68,7 @@
       </div>
     </ng-container>
 
-    <!-- Authenticated -->
+    <!-- Authenticated - Usuario logueado -->
     <ng-container *ngIf="!clerkLoading && isAuthenticated">
       <div class="user-section">
         <button 
@@ -68,6 +80,7 @@
           <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
         </button>
 
+        <!-- Dropdown del usuario -->
         <mat-menu #userMenu="matMenu" class="user-dropdown" xPosition="before">
           <div class="menu-user-header">
             <div class="menu-user-avatar">
@@ -89,6 +102,11 @@
           <button mat-menu-item routerLink="/my-bookings">
             <mat-icon>book_online</mat-icon>
             <span>Mis Reservas</span>
+          </button>
+          
+          <button mat-menu-item routerLink="/favorites">
+            <mat-icon>favorite</mat-icon>
+            <span>Favoritos</span>
           </button>
           
           <div class="menu-divider"></div>
