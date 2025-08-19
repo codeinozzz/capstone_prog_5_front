@@ -1,4 +1,4 @@
-<!-- src/app/pages/home/home.html -->
+<!-- src/app/pages/home/home.html - CON PIPES -->
 <app-header></app-header>
 
 <div class="main-content">
@@ -14,8 +14,8 @@
   <div *ngIf="isSearching && !loading && !error" class="search-info">
     <p>
       <mat-icon>search</mat-icon>
-      Resultados para: "<strong>{{ searchTerm }}</strong>" 
-      ({{ hotels.length }} {{ hotels.length === 1 ? 'hotel encontrado' : 'hoteles encontrados' }})
+      Resultados para: "<strong>{{ searchTerm | titlecase }}</strong>" 
+      ({{ hotels.length | number }} {{ hotels.length === 1 ? 'hotel encontrado' : 'hoteles encontrados' }})
     </p>
   </div>
   
@@ -53,13 +53,23 @@
     </button>
   </div>
 
-  <!-- Hotels Grid -->
-  <div *ngIf="!loading && !error && hotels.length > 0" class="hotels-grid">
-    <app-hotel-card 
-      *ngFor="let hotel of hotels; trackBy: trackByHotelId"
-      [hotel]="hotel"
-      (hotelClicked)="onHotelReservado($event)">
-    </app-hotel-card>
+  <!-- Hotels Grid con contador -->
+  <div *ngIf="!loading && !error && hotels.length > 0">
+    <div class="hotels-summary">
+      <p>
+        Mostrando <strong>{{ hotels.length | number }}</strong> 
+        {{ hotels.length === 1 ? 'hotel' : 'hoteles' }} disponibles
+        <span *ngIf="!isSearching"> • Última actualización: {{ getCurrentTime() | date:'short' }}</span>
+      </p>
+    </div>
+    
+    <div class="hotels-grid">
+      <app-hotel-card 
+        *ngFor="let hotel of hotels; trackBy: trackByHotelId"
+        [hotel]="hotel"
+        (hotelClicked)="onHotelReservado($event)">
+      </app-hotel-card>
+    </div>
   </div>
 </div>
 

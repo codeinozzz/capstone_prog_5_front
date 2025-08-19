@@ -1,4 +1,4 @@
-// src/app/pages/home/home.ts - CORREGIDO
+// src/app/pages/home/home.ts - CORREGIDO CON getCurrentTime
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -144,5 +144,10 @@ export class HomeComponent implements OnInit {
     this.searchTerm = '';
     this.isSearching = false;
     this.loadHotels();
+  }
+
+  // Método para obtener tiempo actual (para pipes)
+  getCurrentTime(): Date {
+    return new Date();
   }
 }

@@ -1,4 +1,4 @@
-/* src/app/components/hotel-card/hotel-card.scss */
+/* src/app/components/hotel-card/hotel-card.scss - CON ESTILOS PARA PIPES */
 .hotel-card {
   max-width: 400px;
   margin: 16px;
@@ -86,6 +86,19 @@
 
       strong {
         font-size: 18px;
+      }
+    }
+
+    // Nuevo estilo para la información del hotel
+    .hotel-info {
+      margin: 8px 0;
+      padding-top: 8px;
+      border-top: 1px solid #f0f0f0;
+
+      .created-date {
+        color: #999;
+        font-size: 12px;
+        font-style: italic;
       }
     }
   }

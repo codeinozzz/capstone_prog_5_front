@@ -1,4 +1,4 @@
-/* src/app/pages/home/home.scss */
+/* src/app/pages/home/home.scss - CON ESTILOS PARA PIPES */
 .main-content {
   min-height: calc(100vh - 128px);
   padding: 20px;
@@ -34,6 +34,28 @@ h2 {
     
     strong {
       color: #4caf50;
+    }
+  }
+}
+
+// Hotels Summary - NUEVO
+.hotels-summary {
+  text-align: center;
+  margin: 20px 0;
+  
+  p {
+    color: #555;
+    font-size: 14px;
+    margin: 0;
+    
+    strong {
+      color: #4caf50;
+      font-weight: 600;
+    }
+    
+    span {
+      color: #999;
+      font-size: 13px;
     }
   }
 }
@@ -149,6 +171,18 @@ h2 {
   h2 {
     font-size: 1.5rem;
     margin-bottom: 20px;
+  }
+
+  .hotels-summary {
+    p {
+      font-size: 13px;
+      
+      span {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+      }
+    }
   }
 }
 

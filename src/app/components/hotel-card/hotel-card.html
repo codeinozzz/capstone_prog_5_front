@@ -1,4 +1,4 @@
-<!-- src/app/components/hotel-card/hotel-card.html -->
+<!-- src/app/components/hotel-card/hotel-card.html - CON PIPES -->
 <mat-card class="hotel-card">
   <img 
     mat-card-image 
@@ -7,10 +7,10 @@
     class="hotel-image">
   
   <mat-card-header>
-    <mat-card-title>{{ hotel.name }}</mat-card-title>
+    <mat-card-title>{{ hotel.name | titlecase }}</mat-card-title>
     <mat-card-subtitle>
       <mat-icon>location_on</mat-icon>
-      {{ hotel.location }}
+      {{ hotel.location | titlecase }}
     </mat-card-subtitle>
   </mat-card-header>
 
@@ -26,21 +26,28 @@
           {{ star === 1 ? 'star' : 'star_border' }}
         </mat-icon>
       </span>
-      <span class="rating-text">({{ hotel.rating }}/5)</span>
+      <span class="rating-text">({{ hotel.rating | number:'1.1-1' }}/5)</span>
     </div>
 
     <!-- Amenidades -->
     <div class="amenities" *ngIf="hotel.amenities.length > 0">
       <mat-chip-set>
         <mat-chip *ngFor="let amenity of getDisplayAmenities()">
-          {{ amenity }}
+          {{ amenity | titlecase }}
         </mat-chip>
       </mat-chip-set>
     </div>
 
-    <!-- Precio -->
+    <!-- Precio con currency pipe -->
     <div class="price" *ngIf="hotel.price">
-      <strong>${{ hotel.price }}</strong> por noche
+      <strong>{{ hotel.price | currency:'USD':'symbol':'1.0-0' }}</strong> por noche
+    </div>
+
+    <!-- Fecha de creación -->
+    <div class="hotel-info" *ngIf="hotel.createdAt">
+      <small class="created-date">
+        Agregado: {{ hotel.createdAt | date:'shortDate' }}
+      </small>
     </div>
   </mat-card-content>
 
