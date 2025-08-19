@@ -1,26 +1,22 @@
-<!-- src/app/pages/booking/booking.html -->
 <app-header></app-header>
 
 <div class="booking-page">
   
-  <!-- Loading -->
   <div *ngIf="loading" class="loading-container">
     <mat-spinner></mat-spinner>
-    <p>Cargando información...</p>
+    <p>Loading information...</p>
   </div>
 
-  <!-- Error -->
   <div *ngIf="error && !loading" class="error-container">
     <mat-icon>error_outline</mat-icon>
     <h3>Error</h3>
     <p>{{ error }}</p>
     <button mat-raised-button color="primary" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
-      Volver
+      Back
     </button>
   </div>
 
-  <!-- Booking Component -->
   <div *ngIf="hotel && !loading && !error" class="booking-container">
     <app-booking
       [hotelId]="hotelId"
@@ -32,7 +28,7 @@
     <div class="back-button-container">
       <button mat-button (click)="goBack()">
         <mat-icon>arrow_back</mat-icon>
-        Volver a hoteles
+        Back to hotels
       </button>
     </div>
   </div>

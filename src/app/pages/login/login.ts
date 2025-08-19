@@ -1,4 +1,3 @@
-// src/app/pages/login/login.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -35,7 +34,6 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Verificar si Clerk ya está cargado
     this.clerkService.clerkLoaded$.subscribe(loaded => {
       this.clerkLoading = !loaded;
       if (loaded) {
@@ -43,7 +41,6 @@ export class LoginComponent implements OnInit {
       }
     });
 
-    // Escuchar cambios en autenticación
     this.clerkService.isAuthenticated$.subscribe(authenticated => {
       this.isAuthenticated = authenticated;
       if (authenticated) {
@@ -58,49 +55,45 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  // Abrir modal de inicio de sesión
   openSignIn(): void {
     try {
       this.clerkService.openSignIn();
     } catch (error) {
-      this.handleAuthError('Error al abrir el modal de inicio de sesión');
+      this.handleAuthError('Error opening sign in modal');
     }
   }
 
-  // Abrir modal de registro
+  // Open sign up modal
   openSignUp(): void {
     try {
       this.clerkService.openSignUp();
     } catch (error) {
-      this.handleAuthError('Error al abrir el modal de registro');
+      this.handleAuthError('Error opening sign up modal');
     }
   }
 
-  // Manejar login exitoso
   private handleLoginSuccess(): void {
     const user = this.clerkService.user;
     if (user) {
       this.snackBar.open(
-        `¡Bienvenido, ${user.firstName || user.emailAddresses[0]?.emailAddress}!`,
-        'Cerrar',
+        `Welcome, ${user.firstName || user.emailAddresses[0]?.emailAddress}!`,
+        'Close',
         {
           duration: 3000,
           panelClass: ['success-snackbar']
         }
       );
       
-      // Redireccionar a la página principal
       setTimeout(() => {
         this.router.navigate(['/']);
       }, 1000);
     }
   }
 
-  // Manejar errores de autenticación
   private handleAuthError(message: string): void {
     this.snackBar.open(
       message,
-      'Cerrar',
+      'Close',
       {
         duration: 5000,
         panelClass: ['error-snackbar']
@@ -108,7 +101,6 @@ export class LoginComponent implements OnInit {
     );
   }
 
-  // Volver a la página principal
   goHome(): void {
     this.router.navigate(['/']);
   }

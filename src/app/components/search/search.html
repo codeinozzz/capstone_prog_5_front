@@ -1,14 +1,13 @@
-<!-- src/app/components/search/search.html -->
 <div class="search-container">
-  <h3>Buscar Hoteles</h3>
+  <h3>Search Hotels</h3>
   
   <div class="search-form">
     <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Buscar por ubicación</mat-label>
+      <mat-label>Search by location</mat-label>
       <input 
         matInput 
         [(ngModel)]="searchText" 
-        placeholder="Ej: La Paz, Santa Cruz..."
+        placeholder="Ex: New York, Los Angeles..."
         (keypress)="onKeyPress($event)">
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
@@ -20,7 +19,7 @@
         (click)="onSearch()"
         [disabled]="!searchText.trim()">
         <mat-icon>search</mat-icon>
-        Buscar
+        Search
       </button>
       
       <button 
@@ -29,7 +28,7 @@
         (click)="onClear()"
         [disabled]="!searchText">
         <mat-icon>clear</mat-icon>
-        Limpiar
+        Clear
       </button>
     </div>
   </div>

@@ -1,4 +1,3 @@
-// src/app/services/clerk.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
@@ -38,18 +37,14 @@ export class ClerkService {
 
   private async initializeClerk(): Promise<void> {
     try {
-      // Esperar a que Clerk se cargue
       await this.waitForClerk();
       
-      // Inicializar Clerk
       await window.Clerk.load({
         publishableKey: this.PUBLISHABLE_KEY
       });
 
-      // Configurar listeners
       this.setupClerkListeners();
       
-      // Verificar si ya está autenticado
       this.checkAuthStatus();
       
       this.clerkLoaded.next(true);
@@ -79,13 +74,12 @@ export class ClerkService {
   }
 
   private setupClerkListeners(): void {
-    // Escuchar cambios en el estado de autenticación
     window.Clerk.addListener((payload: any) => {
       console.log('Clerk event:', payload);
       
       if (payload.user) {
         this.setUser(payload.user);
-        // Redireccionar después del login exitoso
+   
         this.router.navigate(['/']);
       } else {
         this.clearUser();
@@ -101,7 +95,6 @@ export class ClerkService {
     }
   }
 
-  // Abrir modal de inicio de sesión
   openSignIn(): void {
     if (window.Clerk) {
       window.Clerk.openSignIn({
@@ -111,7 +104,6 @@ export class ClerkService {
     }
   }
 
-  // Abrir modal de registro
   openSignUp(): void {
     if (window.Clerk) {
       window.Clerk.openSignUp({
@@ -121,7 +113,6 @@ export class ClerkService {
     }
   }
 
-  // Cerrar sesión
   async signOut(): Promise<void> {
     if (window.Clerk) {
       await window.Clerk.signOut();
@@ -130,21 +121,18 @@ export class ClerkService {
     }
   }
 
-  // Establecer usuario
   private setUser(user: ClerkUser): void {
     this.currentUser.next(user);
     this.isAuthenticated.next(true);
     console.log('Usuario autenticado:', user);
   }
 
-  // Limpiar usuario
   private clearUser(): void {
     this.currentUser.next(null);
     this.isAuthenticated.next(false);
     console.log('Usuario desautenticado');
   }
 
-  // Getters síncronos
   get user(): ClerkUser | null {
     return this.currentUser.value;
   }
@@ -157,7 +145,6 @@ export class ClerkService {
     return this.clerkLoaded.value;
   }
 
-  // Obtener token para llamadas a la API
   async getToken(): Promise<string | null> {
     if (window.Clerk && window.Clerk.session) {
       return await window.Clerk.session.getToken();

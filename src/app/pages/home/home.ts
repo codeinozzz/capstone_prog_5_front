@@ -1,4 +1,3 @@
-// src/app/pages/home/home.ts - CORREGIDO CON getCurrentTime
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -45,7 +44,6 @@ export class HomeComponent implements OnInit {
     this.loadHotels();
   }
 
-  // Cargar hoteles desde la API
   loadHotels() {
     this.loading = true;
     this.error = null;
@@ -54,17 +52,16 @@ export class HomeComponent implements OnInit {
       next: (hotels) => {
         this.hotels = hotels;
         this.loading = false;
-        console.log('Hoteles cargados:', hotels);
+        console.log('Hotels loaded:', hotels);
       },
       error: (error) => {
         this.error = error.message;
         this.loading = false;
-        console.error('Error cargando hoteles:', error);
+        console.error('Error loading hotels:', error);
         
-        // Mostrar error en snackbar
         this.snackBar.open(
-          'Error al cargar hoteles: ' + error.message, 
-          'Cerrar', 
+          'Error loading hotels: ' + error.message, 
+          'Close', 
           {
             duration: 5000,
             panelClass: ['error-snackbar']
@@ -74,34 +71,28 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // Reintentar cargar hoteles
   retryLoadHotels() {
     this.loadHotels();
   }
 
-  // Manejar click en hotel - CORREGIDO
   onHotelReservado(hotel: Hotel) {
     const snackBarRef = this.snackBar.open(
-      `Interesado en: ${hotel.name} - $${hotel.price}/noche`, 
-      'Ver más', 
+      `Interested in: ${hotel.name} - $${hotel.price}/night`, 
+      'See more', 
       {
         duration: 3000
       }
     );
 
-    // Escuchar click en la acción
     snackBarRef.onAction().subscribe(() => {
-      console.log('Ver más detalles de:', hotel);
-      // Aquí podrías navegar a detalle del hotel
+      console.log('See more details of:', hotel);
     });
   }
 
-  // TrackBy function para mejor performance
   trackByHotelId(index: number, hotel: Hotel): string {
     return hotel.id;
   }
 
-  // Buscar hoteles por ubicación
   onSearch(term: string) {
     this.searchTerm = term;
     this.isSearching = true;
@@ -112,12 +103,12 @@ export class HomeComponent implements OnInit {
       next: (hotels) => {
         this.hotels = hotels;
         this.loading = false;
-        console.log('Hoteles encontrados:', hotels);
+        console.log('Hotels found:', hotels);
         
         if (hotels.length === 0) {
           this.snackBar.open(
-            `No se encontraron hoteles en "${term}"`, 
-            'Cerrar', 
+            `No hotels found in "${term}"`, 
+            'Close', 
             { duration: 3000 }
           );
         }
@@ -125,11 +116,11 @@ export class HomeComponent implements OnInit {
       error: (error) => {
         this.error = error.message;
         this.loading = false;
-        console.error('Error en búsqueda:', error);
+        console.error('Search error:', error);
         
         this.snackBar.open(
-          'Error en la búsqueda: ' + error.message, 
-          'Cerrar', 
+          'Search error: ' + error.message, 
+          'Close', 
           {
             duration: 5000,
             panelClass: ['error-snackbar']
@@ -139,14 +130,12 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // Limpiar búsqueda y volver a mostrar todos los hoteles
   onClearSearch() {
     this.searchTerm = '';
     this.isSearching = false;
     this.loadHotels();
   }
 
-  // Método para obtener tiempo actual (para pipes)
   getCurrentTime(): Date {
     return new Date();
   }

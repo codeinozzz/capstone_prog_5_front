@@ -1,7 +1,5 @@
-<!-- src/app/components/header/header.html - CÓDIGO COMPLETO -->
 <mat-toolbar color="primary" class="app-header">
   
-  <!-- Logo/Brand - Lado izquierdo -->
   <div class="header-left">
     <button 
       mat-button 
@@ -12,7 +10,6 @@
     </button>
   </div>
 
-  <!-- Enlaces de navegación -->
   <div class="header-center">
     <button 
       mat-button 
@@ -21,7 +18,7 @@
       [routerLinkActiveOptions]="{exact: true}"
       class="nav-link">
       <mat-icon>home</mat-icon>
-      <span>Inicio</span>
+      <span>Home</span>
     </button>
     
     <button 
@@ -30,24 +27,20 @@
       routerLinkActive="active"
       class="nav-link">
       <mat-icon>hotel</mat-icon>
-      <span>Hoteles</span>
+      <span>Hotels</span>
     </button>
   </div>
 
-  <!-- Spacer para empujar contenido a la derecha -->
   <div class="spacer"></div>
 
-  <!-- Lado derecho - Auth -->
   <div class="header-right">
     
-    <!-- Loading state -->
     <ng-container *ngIf="clerkLoading">
       <div class="auth-loading">
         <mat-spinner diameter="24"></mat-spinner>
       </div>
     </ng-container>
 
-    <!-- Not authenticated -->
     <ng-container *ngIf="!clerkLoading && !isAuthenticated">
       <div class="auth-buttons">
         <button 
@@ -55,7 +48,7 @@
           class="auth-btn signin-btn"
           (click)="openSignIn()">
           <mat-icon>login</mat-icon>
-          <span class="button-text">Iniciar</span>
+          <span class="button-text">Sign In</span>
         </button>
         
         <button 
@@ -63,12 +56,11 @@
           class="auth-btn signup-btn"
           routerLink="/login">
           <mat-icon>person_add</mat-icon>
-          <span class="button-text">Registro</span>
+          <span class="button-text">Sign Up</span>
         </button>
       </div>
     </ng-container>
 
-    <!-- Authenticated - Usuario logueado -->
     <ng-container *ngIf="!clerkLoading && isAuthenticated">
       <div class="user-section">
         <button 
@@ -80,7 +72,6 @@
           <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
         </button>
 
-        <!-- Dropdown del usuario -->
         <mat-menu #userMenu="matMenu" class="user-dropdown" xPosition="before">
           <div class="menu-user-header">
             <div class="menu-user-avatar">
@@ -96,17 +87,17 @@
           
           <button mat-menu-item routerLink="/profile">
             <mat-icon>person</mat-icon>
-            <span>Mi Perfil</span>
+            <span>My Profile</span>
           </button>
           
           <button mat-menu-item routerLink="/my-bookings">
             <mat-icon>book_online</mat-icon>
-            <span>Mis Reservas</span>
+            <span>My Bookings</span>
           </button>
           
           <button mat-menu-item routerLink="/favorites">
             <mat-icon>favorite</mat-icon>
-            <span>Favoritos</span>
+            <span>Favorites</span>
           </button>
           
           <div class="menu-divider"></div>
@@ -116,12 +107,10 @@
             (click)="signOut()"
             class="logout-option">
             <mat-icon>logout</mat-icon>
-            <span>Cerrar Sesión</span>
+            <span>Sign Out</span>
           </button>
         </mat-menu>
       </div>
     </ng-container>
-
   </div>
-
 </mat-toolbar>

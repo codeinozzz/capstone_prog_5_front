@@ -1,11 +1,9 @@
-<!-- src/app/components/booking/booking.html - VERSIÓN SIMPLIFICADA -->
 <mat-card class="booking-card">
   
-  <!-- Título -->
   <mat-card-header>
     <mat-card-title>
       <mat-icon>hotel</mat-icon>
-      Reservar Habitación
+      Book Room
     </mat-card-title>
     <mat-card-subtitle *ngIf="hotelName">
       {{ hotelName | titlecase }}
@@ -14,43 +12,41 @@
 
   <mat-card-content>
     
-    <!-- Formulario de reserva -->
     <div *ngIf="!isSuccess" class="booking-form">
       <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
         
-        <!-- Nombre -->
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Nombre</mat-label>
+          <mat-label>First Name</mat-label>
           <input 
             matInput 
             formControlName="firstName"
-            placeholder="Ingresa tu nombre">
+            placeholder="Enter your first name">
           <mat-icon matSuffix>person</mat-icon>
           <mat-error *ngIf="hasFieldError('firstName')">
             {{ getFieldError('firstName') }}
           </mat-error>
         </mat-form-field>
 
-        <!-- Apellido -->
+        <!-- Last Name -->
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Apellido</mat-label>
+          <mat-label>Last Name</mat-label>
           <input 
             matInput 
             formControlName="lastName"
-            placeholder="Ingresa tu apellido">
+            placeholder="Enter your last name">
           <mat-icon matSuffix>person</mat-icon>
           <mat-error *ngIf="hasFieldError('lastName')">
             {{ getFieldError('lastName') }}
           </mat-error>
         </mat-form-field>
 
-        <!-- Teléfono -->
+        <!-- Phone -->
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Teléfono</mat-label>
+          <mat-label>Phone</mat-label>
           <input 
             matInput 
             formControlName="phone"
-            placeholder="Ej: +591 12345678">
+            placeholder="Ex: +1 234-567-8900">
           <mat-icon matSuffix>phone</mat-icon>
           <mat-error *ngIf="hasFieldError('phone')">
             {{ getFieldError('phone') }}
@@ -59,19 +55,19 @@
 
         <!-- Email -->
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Correo Electrónico</mat-label>
+          <mat-label>Email</mat-label>
           <input 
             matInput 
             type="email"
             formControlName="email"
-            placeholder="ejemplo@email.com">
+            placeholder="example@email.com">
           <mat-icon matSuffix>email</mat-icon>
           <mat-error *ngIf="hasFieldError('email')">
             {{ getFieldError('email') }}
           </mat-error>
         </mat-form-field>
 
-        <!-- Botón de envío -->
+        <!-- Submit button -->
         <button 
           mat-raised-button 
           color="primary" 
@@ -81,32 +77,32 @@
           
           <span *ngIf="!isLoading">
             <mat-icon>book_online</mat-icon>
-            Confirmar Reserva
+            Confirm Booking
           </span>
           
           <span *ngIf="isLoading" class="loading-content">
             <mat-spinner diameter="20"></mat-spinner>
-            Procesando...
+            Processing...
           </span>
         </button>
 
       </form>
     </div>
 
-    <!-- Mensaje de éxito -->
+    <!-- Success message -->
     <div *ngIf="isSuccess" class="success-content">
       <div class="success-icon">
         <mat-icon>check_circle</mat-icon>
       </div>
       
-      <h3>¡Reserva Confirmada!</h3>
+      <h3>Booking Confirmed!</h3>
       
-      <p>Tu reserva ha sido creada exitosamente</p>
+      <p>Your booking has been created successfully</p>
       
       <div class="confirmation-details">
         <div class="detail-item">
           <mat-icon>confirmation_number</mat-icon>
-          <span>Número de confirmación: <strong>{{ confirmationNumber | uppercase }}</strong></span>
+          <span>Confirmation number: <strong>{{ confirmationNumber | uppercase }}</strong></span>
         </div>
         
         <div class="detail-item" *ngIf="hotelName">
@@ -121,7 +117,7 @@
         (click)="newBooking()"
         class="new-booking-btn">
         <mat-icon>add</mat-icon>
-        Nueva Reserva
+        New Booking
       </button>
     </div>
 

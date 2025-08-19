@@ -1,4 +1,3 @@
-// src/app/components/search/search.ts
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,7 +38,6 @@ export class SearchComponent {
     this.clearSearch.emit();
   }
 
-  // Buscar al presionar Enter
   onKeyPress(event: KeyboardEvent) {
     if (event.key === 'Enter') {
       this.onSearch();

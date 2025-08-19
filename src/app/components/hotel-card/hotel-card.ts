@@ -1,4 +1,3 @@
-// src/app/components/hotel-card/hotel-card.ts - ACTUALIZADO
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -24,9 +23,9 @@ import { Hotel } from '../../services/hotel.service';
 export class HotelCardComponent {
   @Input() hotel: Hotel = {
     id: '0',
-    name: 'Hotel por defecto',
-    location: 'Ubicación por defecto',
-    description: 'Descripción por defecto',
+    name: 'Default hotel',
+    location: 'Default location',
+    description: 'Default description',
     rating: 3,
     amenities: [],
     createdAt: new Date(),
@@ -40,18 +39,15 @@ export class HotelCardComponent {
   constructor(private router: Router) {}
   
   onReservar() {
-    console.log('Reservando:', this.hotel.name);
-    // Navegar a la página de reservas
+    console.log('Booking:', this.hotel.name);
     this.router.navigate(['/booking', this.hotel.id]);
   }
 
-  // Generar array de estrellas para mostrar rating
   getStars(): number[] {
     const rating = this.hotel.rating || 0;
     return Array(5).fill(0).map((_, i) => i < Math.floor(rating) ? 1 : 0);
   }
 
-  // Obtener máximo 3 amenities para mostrar
   getDisplayAmenities(): string[] {
     return this.hotel.amenities.slice(0, 3);
   }

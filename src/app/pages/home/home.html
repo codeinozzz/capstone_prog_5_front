@@ -1,65 +1,58 @@
-<!-- src/app/pages/home/home.html - CON PIPES -->
 <app-header></app-header>
 
 <div class="main-content">
-  <h2>Hoteles Disponibles</h2>
+  <h2>Available Hotels</h2>
   
-  <!-- Search Component -->
   <app-search 
     (searchTerm)="onSearch($event)"
     (clearSearch)="onClearSearch()">
   </app-search>
   
-  <!-- Search Results Info -->
   <div *ngIf="isSearching && !loading && !error" class="search-info">
     <p>
       <mat-icon>search</mat-icon>
-      Resultados para: "<strong>{{ searchTerm | titlecase }}</strong>" 
-      ({{ hotels.length | number }} {{ hotels.length === 1 ? 'hotel encontrado' : 'hoteles encontrados' }})
+      Results for: "<strong>{{ searchTerm | titlecase }}</strong>" 
+      ({{ hotels.length | number }} {{ hotels.length === 1 ? 'hotel found' : 'hotels found' }})
     </p>
   </div>
   
-  <!-- Loading Spinner -->
   <div *ngIf="loading" class="loading-container">
     <mat-spinner></mat-spinner>
-    <p>Cargando hoteles...</p>
+    <p>Loading hotels...</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="error && !loading" class="error-container">
     <mat-icon class="error-icon">error_outline</mat-icon>
-    <h3>¡Ups! Algo salió mal</h3>
+    <h3>Oops! Something went wrong</h3>
     <p>{{ error }}</p>
     <button 
       mat-raised-button 
       color="primary" 
       (click)="retryLoadHotels()">
       <mat-icon>refresh</mat-icon>
-      Reintentar
+      Retry
     </button>
   </div>
 
-  <!-- No Hotels State -->
   <div *ngIf="!loading && !error && hotels.length === 0" class="no-hotels-container">
     <mat-icon class="no-hotels-icon">hotel</mat-icon>
-    <h3>No hay hoteles disponibles</h3>
-    <p>No se encontraron hoteles en este momento.</p>
+    <h3>No hotels available</h3>
+    <p>No hotels found at this time.</p>
     <button 
       mat-raised-button 
       color="primary" 
       (click)="retryLoadHotels()">
       <mat-icon>refresh</mat-icon>
-      Actualizar
+      Update
     </button>
   </div>
 
-  <!-- Hotels Grid con contador -->
   <div *ngIf="!loading && !error && hotels.length > 0">
     <div class="hotels-summary">
       <p>
-        Mostrando <strong>{{ hotels.length | number }}</strong> 
-        {{ hotels.length === 1 ? 'hotel' : 'hoteles' }} disponibles
-        <span *ngIf="!isSearching"> • Última actualización: {{ getCurrentTime() | date:'short' }}</span>
+        Showing <strong>{{ hotels.length | number }}</strong> 
+        {{ hotels.length === 1 ? 'hotel' : 'hotels' }} available
+        <span *ngIf="!isSearching"> • Last updated: {{ getCurrentTime() | date:'short' }}</span>
       </p>
     </div>
     

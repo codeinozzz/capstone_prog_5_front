@@ -1,29 +1,26 @@
-<!-- src/app/pages/login/login.html -->
 <div class="login-container">
   
-  <!-- Loading state -->
   <div *ngIf="clerkLoading" class="loading-card">
     <mat-card>
       <mat-card-content>
         <div class="loading-content">
           <mat-spinner diameter="40"></mat-spinner>
-          <h3>Cargando sistema de autenticación...</h3>
-          <p>Por favor espera un momento</p>
+          <h3>Loading authentication system...</h3>
+          <p>Please wait a moment</p>
         </div>
       </mat-card-content>
     </mat-card>
   </div>
 
-  <!-- Authentication options -->
   <div *ngIf="!clerkLoading && !isAuthenticated" class="auth-card">
     <mat-card>
       <mat-card-header>
         <mat-card-title>
           <mat-icon>hotel</mat-icon>
-          Acceder a Hotel Jala
+          Access Hotel Jala
         </mat-card-title>
         <mat-card-subtitle>
-          Inicia sesión o regístrate para continuar
+          Sign in or register to continue
         </mat-card-subtitle>
       </mat-card-header>
 
@@ -35,7 +32,7 @@
             class="auth-btn"
             (click)="openSignIn()">
             <mat-icon>login</mat-icon>
-            Iniciar Sesión
+            Sign In
           </button>
 
           <button 
@@ -44,28 +41,28 @@
             class="auth-btn"
             (click)="openSignUp()">
             <mat-icon>person_add</mat-icon>
-            Crear Cuenta
+            Create Account
           </button>
         </div>
 
         <div class="info-section">
-          <h4>¿Por qué crear una cuenta?</h4>
+          <h4>Why create an account?</h4>
           <ul>
             <li>
               <mat-icon>check_circle</mat-icon>
-              Reservar habitaciones fácilmente
+              Book rooms easily
             </li>
             <li>
               <mat-icon>check_circle</mat-icon>
-              Guardar tus hoteles favoritos
+              Save your favorite hotels
             </li>
             <li>
               <mat-icon>check_circle</mat-icon>
-              Gestionar tus reservas
+              Manage your bookings
             </li>
             <li>
               <mat-icon>check_circle</mat-icon>
-              Ofertas exclusivas
+              Exclusive offers
             </li>
           </ul>
         </div>
@@ -77,20 +74,19 @@
           (click)="goHome()"
           class="back-btn">
           <mat-icon>arrow_back</mat-icon>
-          Volver al inicio
+          Back to home
         </button>
       </mat-card-actions>
     </mat-card>
   </div>
 
-  <!-- Already authenticated -->
   <div *ngIf="!clerkLoading && isAuthenticated" class="success-card">
     <mat-card>
       <mat-card-content>
         <div class="success-content">
           <mat-icon class="success-icon">check_circle</mat-icon>
-          <h3>¡Ya tienes sesión iniciada!</h3>
-          <p>Redirigiendo a la página principal...</p>
+          <h3>You're already signed in!</h3>
+          <p>Redirecting to main page...</p>
           <mat-spinner diameter="30"></mat-spinner>
         </div>
       </mat-card-content>

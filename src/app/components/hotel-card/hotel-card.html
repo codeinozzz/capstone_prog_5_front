@@ -1,4 +1,3 @@
-<!-- src/app/components/hotel-card/hotel-card.html - CON PIPES -->
 <mat-card class="hotel-card">
   <img 
     mat-card-image 
@@ -17,7 +16,6 @@
   <mat-card-content>
     <p class="description">{{ hotel.description }}</p>
     
-    <!-- Rating con estrellas -->
     <div class="rating" *ngIf="hotel.rating">
       <span class="stars">
         <mat-icon 
@@ -29,7 +27,6 @@
       <span class="rating-text">({{ hotel.rating | number:'1.1-1' }}/5)</span>
     </div>
 
-    <!-- Amenidades -->
     <div class="amenities" *ngIf="hotel.amenities.length > 0">
       <mat-chip-set>
         <mat-chip *ngFor="let amenity of getDisplayAmenities()">
@@ -38,15 +35,13 @@
       </mat-chip-set>
     </div>
 
-    <!-- Precio con currency pipe -->
     <div class="price" *ngIf="hotel.price">
-      <strong>{{ hotel.price | currency:'USD':'symbol':'1.0-0' }}</strong> por noche
+      <strong>{{ hotel.price | currency:'USD':'symbol':'1.0-0' }}</strong> per night
     </div>
 
-    <!-- Fecha de creación -->
     <div class="hotel-info" *ngIf="hotel.createdAt">
       <small class="created-date">
-        Agregado: {{ hotel.createdAt | date:'shortDate' }}
+        Added: {{ hotel.createdAt | date:'shortDate' }}
       </small>
     </div>
   </mat-card-content>
@@ -58,7 +53,7 @@
       (click)="onReservar()"
       class="reserve-btn">
       <mat-icon>hotel</mat-icon>
-      Reservar
+      Book
     </button>
   </mat-card-actions>
 </mat-card>

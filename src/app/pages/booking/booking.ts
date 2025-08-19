@@ -78,14 +78,12 @@ export class BookingPageComponent implements OnInit, CanComponentDeactivate {
     this.router.navigate(['/']);
   }
 
-  // Implementar el guard
+  // Implement guard
   canDeactivate(): boolean {
-    // Si el componente hijo no está cargado aún, permitir salir
     if (!this.bookingComponent) {
       return true;
     }
     
-    // Consultar al componente hijo
     return this.bookingComponent.canDeactivate();
   }
 }

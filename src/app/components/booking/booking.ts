@@ -56,19 +56,19 @@ export class BookingComponent implements CanComponentDeactivate {
     const field = this.bookingForm.get(fieldName);
 
     if (field?.hasError('required')) {
-      return `${this.getFieldLabel(fieldName)} es requerido`;
+      return `${this.getFieldLabel(fieldName)} is required`;
     }
 
     if (field?.hasError('minlength')) {
-      return `${this.getFieldLabel(fieldName)} debe tener al menos 2 caracteres`;
+      return `${this.getFieldLabel(fieldName)} must be at least 2 characters`;
     }
 
     if (field?.hasError('email')) {
-      return 'Ingresa un email válido';
+      return 'Enter a valid email';
     }
 
     if (field?.hasError('pattern') && fieldName === 'phone') {
-      return 'Ingresa un teléfono válido';
+      return 'Enter a valid phone number';
     }
 
     return '';
@@ -76,9 +76,9 @@ export class BookingComponent implements CanComponentDeactivate {
 
   private getFieldLabel(fieldName: string): string {
     const labels: any = {
-      firstName: 'Nombre',
-      lastName: 'Apellido',
-      phone: 'Teléfono',
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      phone: 'Phone',
       email: 'Email'
     };
     return labels[fieldName] || fieldName;
@@ -108,8 +108,8 @@ export class BookingComponent implements CanComponentDeactivate {
             this.confirmationNumber = response.data?.confirmationNumber || 'N/A';
 
             this.snackBar.open(
-              '¡Reserva creada exitosamente!',
-              'Cerrar',
+              'Booking created successfully!',
+              'Close',
               {
                 duration: 3000,
                 panelClass: ['success-snackbar']
@@ -118,18 +118,18 @@ export class BookingComponent implements CanComponentDeactivate {
 
             this.bookingCompleted.emit(response);
           } else {
-            this.showError('Error al crear la reserva');
+            this.showError('Error creating booking');
           }
         },
         error: (error) => {
           this.isLoading = false;
           console.error('Error creating booking:', error);
 
-          let errorMessage = 'Error al crear la reserva';
+          let errorMessage = 'Error creating booking';
           if (error.error?.message) {
             errorMessage = error.error.message;
           } else if (error.status === 0) {
-            errorMessage = 'No se puede conectar con el servidor';
+            errorMessage = 'Cannot connect to server';
           }
 
           this.showError(errorMessage);
@@ -138,8 +138,8 @@ export class BookingComponent implements CanComponentDeactivate {
     } else {
       this.bookingForm.markAllAsTouched();
       this.snackBar.open(
-        'Por favor completa todos los campos correctamente',
-        'Cerrar',
+        'Please complete all fields correctly',
+        'Close',
         { duration: 3000 }
       );
     }
@@ -148,7 +148,7 @@ export class BookingComponent implements CanComponentDeactivate {
   private showError(message: string): void {
     this.snackBar.open(
       message,
-      'Cerrar',
+      'Close',
       {
         duration: 5000,
         panelClass: ['error-snackbar']
@@ -162,19 +162,15 @@ export class BookingComponent implements CanComponentDeactivate {
     this.bookingForm.reset();
   }
 
-  // Implementar el guard correctamente
   canDeactivate(): boolean {
-    // Si la reserva fue exitosa, permitir salir
     if (this.isSuccess) {
       return true;
     }
 
-    // Si el formulario tiene cambios y no está cargando, preguntar al usuario
     if (this.bookingForm.dirty && !this.isLoading) {
-      return false; // El guard mostrará el confirm
+      return false;
     }
 
-    // En cualquier otro caso, permitir salir
     return true;
   }
 }

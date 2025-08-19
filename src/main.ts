@@ -12,6 +12,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideAnimationsAsync(),
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()) // Para peticiones HTTP
+    provideHttpClient(withInterceptorsFromDi()) 
   ]
 }).catch(err => console.error(err));
