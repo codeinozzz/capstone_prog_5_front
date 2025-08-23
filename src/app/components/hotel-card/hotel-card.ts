@@ -1,3 +1,4 @@
+// src/app/components/hotel-card/hotel-card.ts
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -38,9 +39,11 @@ export class HotelCardComponent {
 
   constructor(private router: Router) {}
   
-  onReservar() {
-    console.log('Booking:', this.hotel.name);
-    this.router.navigate(['/booking', this.hotel.id]);
+  // CORREGIDO: Navegar a habitaciones, no a booking directo
+  onVerHabitaciones() {
+    console.log('Ver habitaciones:', this.hotel.name);
+    // Redirige a la nueva página de habitaciones
+    this.router.navigate(['/hotel', this.hotel.id, 'rooms']);
   }
 
   getStars(): number[] {

@@ -1,0 +1,153 @@
+<p>rooms works!</p>
+<app-header></app-header>
+
+<div class="rooms-page">
+  
+  <!-- Loading hotel info -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading hotel information...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <h3>Error</h3>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to hotels
+    </button>
+  </div>
+
+  <!-- Main content -->
+  <div *ngIf="hotel && !loading && !error" class="rooms-container">
+    
+    <!-- Hotel header -->
+    <div class="hotel-header">
+      <button mat-button (click)="goBack()" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+        Back to hotels
+      </button>
+      
+      <div class="hotel-info">
+        <h2>{{ hotel.name | titlecase }}</h2>
+        <p>
+          <mat-icon>location_on</mat-icon>
+          {{ hotel.location | titlecase }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Date selector -->
+    <mat-card class="date-selector">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>date_range</mat-icon>
+          Selecciona tus fechas
+        </mat-card-title>
+        <mat-card-subtitle>
+          Elige las fechas para ver habitaciones disponibles
+        </mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <form [formGroup]="dateForm" class="date-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Check-in</mat-label>
+            <input 
+              matInput 
+              [matDatepicker]="checkInPicker"
+              formControlName="checkIn"
+              [min]="minDate">
+            <mat-datepicker-toggle matSuffix [for]="checkInPicker"></mat-datepicker-toggle>
+            <mat-datepicker #checkInPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Check-out</mat-label>
+            <input 
+              matInput 
+              [matDatepicker]="checkOutPicker"
+              formControlName="checkOut"
+              [min]="minDate">
+            <mat-datepicker-toggle matSuffix [for]="checkOutPicker"></mat-datepicker-toggle>
+            <mat-datepicker #checkOutPicker></mat-datepicker>
+          </mat-form-field>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Room availability status -->
+    <div class="availability-status" *ngIf="dateForm.valid">
+      <div *ngIf="roomsLoading" class="loading-rooms">
+        <mat-spinner diameter="24"></mat-spinner>
+        <span>Verificando disponibilidad...</span>
+      </div>
+      
+      <div *ngIf="!roomsLoading && rooms.length > 0" class="rooms-found">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ rooms.length }} habitacion(es) disponible(s)</span>
+      </div>
+      
+      <div *ngIf="!roomsLoading && rooms.length === 0 && isValidDateRange()" class="no-rooms">
+        <mat-icon>info</mat-icon>
+        <span>No hay habitaciones disponibles para estas fechas</span>
+      </div>
+    </div>
+
+    <!-- Rooms grid -->
+    <div *ngIf="rooms.length > 0" class="rooms-grid">
+      <mat-card *ngFor="let room of rooms" class="room-card">
+        <mat-card-header>
+          <mat-card-title>{{ getRoomTypeLabel(room.type) }}</mat-card-title>
+          <mat-card-subtitle>
+            <mat-icon>people</mat-icon>
+            Hasta {{ room.capacity }} {{ room.capacity === 1 ? 'persona' : 'personas' }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="room-info">
+            <div class="room-detail">
+              <mat-icon>bed</mat-icon>
+              <span>{{ room.beds || 'Cama estándar' }}</span>
+            </div>
+            
+            <div class="room-detail" *ngIf="room.amenities?.length">
+              <mat-icon>star</mat-icon>
+              <span>{{ room.amenities.slice(0, 2).join(', ') }}</span>
+            </div>
+          </div>
+
+          <div class="room-price">
+            <strong>{{ room.price | currency:'USD':'symbol':'1.0-0' }}</strong>
+            <small>por noche</small>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="onReservarHabitacion(room)"
+            [disabled]="!isValidDateRange()"
+            class="reserve-room-btn">
+            <mat-icon>book_online</mat-icon>
+            Reservar
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- Empty state when no dates selected -->
+    <div *ngIf="!dateForm.valid" class="select-dates-prompt">
+      <mat-icon>date_range</mat-icon>
+      <h3>Selecciona tus fechas</h3>
+      <p>Elige las fechas de check-in y check-out para ver habitaciones disponibles</p>
+    </div>
+
+  </div>
+</div>
+
+<app-footer></app-footer>

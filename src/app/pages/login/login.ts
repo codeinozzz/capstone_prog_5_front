@@ -1,6 +1,7 @@
+// src/app/pages/login/login.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,14 +27,22 @@ import { ClerkService } from '../../services/clerk.service';
 export class LoginComponent implements OnInit {
   clerkLoading = true;
   isAuthenticated = false;
+  private returnUrl: string = '/';
 
   constructor(
     private clerkService: ClerkService,
     private router: Router,
+    private route: ActivatedRoute,
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
+    // Capturar returnUrl de query params
+    this.route.queryParams.subscribe(params => {
+      this.returnUrl = params['returnUrl'] || '/';
+      console.log('Login page - returnUrl:', this.returnUrl);
+    });
+
     this.clerkService.clerkLoaded$.subscribe(loaded => {
       this.clerkLoading = !loaded;
       if (loaded) {
@@ -51,21 +60,23 @@ export class LoginComponent implements OnInit {
 
   private checkAuthAndRedirect(): void {
     if (this.clerkService.authenticated) {
-      this.router.navigate(['/']);
+      // Si ya está autenticado, redirigir inmediatamente
+      this.router.navigate([this.returnUrl]);
     }
   }
 
   openSignIn(): void {
     try {
+      console.log('Opening Clerk SignIn modal...');
       this.clerkService.openSignIn();
     } catch (error) {
       this.handleAuthError('Error opening sign in modal');
     }
   }
 
-  // Open sign up modal
   openSignUp(): void {
     try {
+      console.log('Opening Clerk SignUp modal...');
       this.clerkService.openSignUp();
     } catch (error) {
       this.handleAuthError('Error opening sign up modal');
@@ -84,8 +95,10 @@ export class LoginComponent implements OnInit {
         }
       );
       
+      // Redirigir a la URL de retorno después de un breve delay
+      console.log('Login successful, redirecting to:', this.returnUrl);
       setTimeout(() => {
-        this.router.navigate(['/']);
+        this.router.navigate([this.returnUrl]);
       }, 1000);
     }
   }

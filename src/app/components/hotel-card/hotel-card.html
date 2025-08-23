@@ -36,7 +36,7 @@
     </div>
 
     <div class="price" *ngIf="hotel.price">
-      <strong>{{ hotel.price | currency:'USD':'symbol':'1.0-0' }}</strong> per night
+      <strong>From {{ hotel.price | currency:'USD':'symbol':'1.0-0' }}</strong> per night
     </div>
 
     <div class="hotel-info" *ngIf="hotel.createdAt">
@@ -47,13 +47,14 @@
   </mat-card-content>
 
   <mat-card-actions>
+    <!-- CORREGIDO: Botón ahora va a habitaciones -->
     <button 
       mat-raised-button 
       color="primary" 
-      (click)="onReservar()"
+      (click)="onVerHabitaciones()"
       class="reserve-btn">
-      <mat-icon>hotel</mat-icon>
-      Book
+      <mat-icon>meeting_room</mat-icon>
+      Ver Habitaciones
     </button>
   </mat-card-actions>
 </mat-card>
