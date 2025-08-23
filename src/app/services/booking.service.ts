@@ -10,6 +10,8 @@ export interface BookingData {
   email: string;
   hotelId: string;
   roomId?: string;
+  checkInDate: string;
+  checkOutDate: string;
 }
 
 export interface BookingResponse {
@@ -18,6 +20,9 @@ export interface BookingResponse {
   data?: {
     bookingId: string;
     confirmationNumber: string;
+    firstName: string;
+    lastName: string;
+    email: string;
   };
 }
 
@@ -29,12 +34,34 @@ export class BookingService {
 
   constructor(private http: HttpClient) {}
 
-  // Crear nueva reserva
+  // Crear reserva - SIMPLE
   createBooking(bookingData: BookingData): Observable<BookingResponse> {
     return this.http.post<BookingResponse>(`${this.apiUrl}/bookings`, bookingData).pipe(
       map(response => response),
       catchError(error => {
         console.error('Error creating booking:', error);
+        throw error;
+      })
+    );
+  }
+
+  // Obtener mis reservas - SIMPLE
+  getMyBookings(): Observable<{ success: boolean; data: any[]; total: number }> {
+    return this.http.get<{ success: boolean; data: any[]; total: number }>(`${this.apiUrl}/bookings/my`).pipe(
+      map(response => response),
+      catchError(error => {
+        console.error('Error fetching bookings:', error);
+        throw error;
+      })
+    );
+  }
+
+  // Cancelar reserva - SIMPLE
+  cancelBooking(bookingId: string): Observable<{ success: boolean; message: string }> {
+    return this.http.put<{ success: boolean; message: string }>(`${this.apiUrl}/bookings/${bookingId}/cancel`, {}).pipe(
+      map(response => response),
+      catchError(error => {
+        console.error('Error cancelling booking:', error);
         throw error;
       })
     );

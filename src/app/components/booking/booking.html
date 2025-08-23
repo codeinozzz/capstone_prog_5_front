@@ -15,6 +15,36 @@
     <div *ngIf="!isSuccess" class="booking-form">
       <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
         
+        <!-- FECHAS SIMPLES -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Check-in Date</mat-label>
+          <input 
+            matInput 
+            [matDatepicker]="checkInPicker"
+            formControlName="checkInDate"
+            [min]="minDate">
+          <mat-datepicker-toggle matSuffix [for]="checkInPicker"></mat-datepicker-toggle>
+          <mat-datepicker #checkInPicker></mat-datepicker>
+          <mat-error *ngIf="hasFieldError('checkInDate')">
+            {{ getFieldError('checkInDate') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Check-out Date</mat-label>
+          <input 
+            matInput 
+            [matDatepicker]="checkOutPicker"
+            formControlName="checkOutDate"
+            [min]="minDate">
+          <mat-datepicker-toggle matSuffix [for]="checkOutPicker"></mat-datepicker-toggle>
+          <mat-datepicker #checkOutPicker></mat-datepicker>
+          <mat-error *ngIf="hasFieldError('checkOutDate')">
+            {{ getFieldError('checkOutDate') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- DATOS PERSONALES SIMPLES -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>First Name</mat-label>
           <input 
@@ -27,7 +57,6 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Last Name -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Last Name</mat-label>
           <input 
@@ -40,20 +69,18 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Phone -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Phone</mat-label>
           <input 
             matInput 
             formControlName="phone"
-            placeholder="Ex: +1 234-567-8900">
+            placeholder="Your phone number">
           <mat-icon matSuffix>phone</mat-icon>
           <mat-error *ngIf="hasFieldError('phone')">
             {{ getFieldError('phone') }}
           </mat-error>
         </mat-form-field>
 
-        <!-- Email -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
           <input 
@@ -67,7 +94,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Submit button -->
+        <!-- BOTÓN SIMPLE -->
         <button 
           mat-raised-button 
           color="primary" 
@@ -89,20 +116,19 @@
       </form>
     </div>
 
-    <!-- Success message -->
+    <!-- SUCCESS SIMPLE -->
     <div *ngIf="isSuccess" class="success-content">
       <div class="success-icon">
         <mat-icon>check_circle</mat-icon>
       </div>
       
       <h3>Booking Confirmed!</h3>
-      
       <p>Your booking has been created successfully</p>
       
       <div class="confirmation-details">
         <div class="detail-item">
           <mat-icon>confirmation_number</mat-icon>
-          <span>Confirmation number: <strong>{{ confirmationNumber | uppercase }}</strong></span>
+          <span>Confirmation: <strong>{{ confirmationNumber | uppercase }}</strong></span>
         </div>
         
         <div class="detail-item" *ngIf="hotelName">
