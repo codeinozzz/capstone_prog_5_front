@@ -1,185 +1,142 @@
-// src/app/components/booking/booking.ts - ACTUALIZADO PARA HABITACIONES
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
+// src/app/pages/booking/booking.ts - FIXED VERSION
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { CanComponentDeactivate } from '../../guards/can-deactivate.guard';
-import { BookingService, BookingData } from '../../services/booking.service';
-import { ClerkService } from '../../services/clerk.service';
+
+// FIXED: Import header, footer, and booking form components
+import { HeaderComponent } from '../../components/header/header';
+import { FooterComponent } from '../../components/footer/footer';
+import { BookingComponent as BookingFormComponent } from '../../components/booking/booking';
+import { HotelService, Hotel } from '../../services/hotel.service';
+import { RoomService, Room } from '../../services/room.service';
 
 @Component({
-  selector: 'app-booking',
+  selector: 'app-booking-page',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
+    // FIXED: Add missing imports
+    HeaderComponent,
+    FooterComponent,
+    BookingFormComponent,
+    MatProgressSpinnerModule,
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule,
-    MatProgressSpinnerModule,
-    MatDatepickerModule,
-    MatNativeDateModule
+    MatSnackBarModule
   ],
   templateUrl: './booking.html',
   styleUrl: './booking.scss'
 })
-export class BookingComponent implements CanComponentDeactivate, OnInit, OnChanges {
-  // CORREGIDO: Mantener hotelId si se pasa desde el template, o removerlo del template
-  @Input() hotelId: string = ''; // Si necesitas hotelId, manténlo
-  @Input() roomId: string = '';  // roomId es obligatorio
-  @Input() hotelName: string = '';
-  @Input() checkIn: string = '';
-  @Input() checkOut: string = '';
-  @Output() bookingCompleted = new EventEmitter<any>();
-  
-  bookingForm: FormGroup;
-  isLoading = false;
-  isSuccess = false;
-  confirmationNumber = '';
-  
-  minDate = new Date();
+export class BookingComponent implements OnInit {
+  // FIXED: Add missing properties
+  hotelId: string = '';
+  roomId: string = '';
+  hotel: Hotel | null = null;
+  room: Room | null = null;
+  loading = true;
+  error: string | null = null;
+  checkIn: string = '';
+  checkOut: string = '';
+  hotelName: string = '';
 
   constructor(
-    private fb: FormBuilder,
-    private bookingService: BookingService,
-    private snackBar: MatSnackBar,
-    private clerkService: ClerkService
-  ) {
-    this.bookingForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      phone: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      checkInDate: ['', [Validators.required]],
-      checkOutDate: ['', [Validators.required]]
-    });
-  }
+    private route: ActivatedRoute,
+    private router: Router,
+    private hotelService: HotelService,
+    private roomService: RoomService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit() {
-    this.fillUserData();
-    this.fillDates();
-  }
-
-  ngOnChanges() {
-    // Si cambian los inputs, actualizar fechas
-    this.fillDates();
-  }
-
-  private fillUserData() {
-    // Auto-completar datos del usuario si está autenticado
-    if (this.clerkService.authenticated) {
-      const user = this.clerkService.user;
-      if (user) {
-        this.bookingForm.patchValue({
-          firstName: user.firstName || '',
-          lastName: user.lastName || '',
-          email: user.emailAddresses[0]?.emailAddress || ''
-        });
-      }
-    }
-  }
-
-  private fillDates() {
-    // Pre-llenar fechas si vienen como parámetros
-    if (this.checkIn && this.checkOut) {
-      this.bookingForm.patchValue({
-        checkInDate: new Date(this.checkIn),
-        checkOutDate: new Date(this.checkOut)
-      });
-    }
-  }
-
-  getFieldError(fieldName: string): string {
-    const field = this.bookingForm.get(fieldName);
-    if (field?.hasError('required')) {
-      return `${fieldName} is required`;
-    }
-    if (field?.hasError('email')) {
-      return 'Enter a valid email';
-    }
-    if (field?.hasError('minlength')) {
-      return `Must be at least 2 characters`;
-    }
-    return '';
-  }
-
-  hasFieldError(fieldName: string): boolean {
-    const field = this.bookingForm.get(fieldName);
-    return !!(field?.invalid && field?.touched);
-  }
-
-  onSubmit(): void {
-    if (this.bookingForm.valid && !this.isLoading && this.roomId) {
-      this.isLoading = true;
-      
-      const bookingData: BookingData = {
-        ...this.bookingForm.value,
-        roomId: this.roomId,  // Enviar roomId (backend extraerá hotelId)
-        hotelId: this.hotelId, // Incluir hotelId si es necesario
-        checkInDate: this.bookingForm.value.checkInDate?.toISOString(),
-        checkOutDate: this.bookingForm.value.checkOutDate?.toISOString()
-      };
-
-      console.log('Creating booking with data:', bookingData);
-
-      this.bookingService.createBooking(bookingData).subscribe({
-        next: (response) => {
-          this.isLoading = false;
-          if (response.success) {
-            this.isSuccess = true;
-            this.confirmationNumber = response.data?.confirmationNumber || 'N/A';
-            this.snackBar.open('Booking created successfully!', 'Close', {
-              duration: 3000,
-              panelClass: ['success-snackbar']
-            });
-            this.bookingCompleted.emit(response);
-          } else {
-            this.showError('Error creating booking');
-          }
-        },
-        error: (error) => {
-          this.isLoading = false;
-          console.error('Booking error:', error);
-          this.showError(error.error?.message || 'Error creating booking');
-        }
-      });
-    } else {
-      if (!this.roomId) {
-        this.showError('Room information missing');
+    // Get roomId from route params
+    this.route.params.subscribe(params => {
+      this.roomId = params['roomId'];
+      if (this.roomId) {
+        this.loadRoomData();
       } else {
-        this.bookingForm.markAllAsTouched();
-        this.showError('Please complete all fields correctly');
+        this.error = 'Room ID is required';
+        this.loading = false;
       }
-    }
-  }
+    });
 
-  private showError(message: string): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 5000,
-      panelClass: ['error-snackbar']
+    // Get query parameters for dates and hotel name
+    this.route.queryParams.subscribe(params => {
+      this.checkIn = params['checkIn'] || '';
+      this.checkOut = params['checkOut'] || '';
+      this.hotelName = params['hotelName'] || '';
     });
   }
 
-  newBooking(): void {
-    this.isSuccess = false;
-    this.confirmationNumber = '';
-    this.bookingForm.reset();
-    this.fillUserData();
-    this.fillDates();
+  loadRoomData() {
+    this.loading = true;
+    this.error = null;
+
+    this.roomService.getRoomById(this.roomId).subscribe({
+      next: (room) => {
+        this.room = room;
+        this.hotelId = room.hotelId;
+        this.loadHotelData();
+      },
+      error: (error) => {
+        this.error = 'Error loading room information';
+        this.loading = false;
+        console.error('Error loading room:', error);
+        
+        this.snackBar.open(
+          'Error loading room: ' + error.message,
+          'Close',
+          {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          }
+        );
+      }
+    });
   }
 
-  canDeactivate(): boolean {
-    return this.isSuccess || !this.bookingForm.dirty || this.isLoading;
+  loadHotelData() {
+    if (!this.hotelId) {
+      this.loading = false;
+      return;
+    }
+
+    this.hotelService.getHotelById(this.hotelId).subscribe({
+      next: (hotel) => {
+        this.hotel = hotel;
+        this.hotelName = this.hotelName || hotel.name; // Use query param or hotel name
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = 'Error loading hotel information';
+        this.loading = false;
+        console.error('Error loading hotel:', error);
+      }
+    });
+  }
+
+  // FIXED: Add missing methods
+  onBookingCompleted(event: any) {
+    console.log('Booking completed:', event);
+    this.snackBar.open(
+      'Booking completed successfully!',
+      'Close',
+      {
+        duration: 3000,
+        panelClass: ['success-snackbar']
+      }
+    );
+  }
+
+  goBack() {
+    // Navigate back to rooms page or home
+    if (this.hotelId) {
+      this.router.navigate(['/hotel', this.hotelId, 'rooms']);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }
