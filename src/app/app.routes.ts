@@ -1,6 +1,6 @@
-// src/app/app.routes.ts
+// src/app/app.routes.ts - CORREGIDO
 import { Routes } from '@angular/router';
-import { CanDeactivateGuard } from './guards/can-deactivate.guard';
+import { canDeactivateGuard } from './guards/can-deactivate.guard';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -18,27 +18,22 @@ export const routes: Routes = [
     pathMatch: 'full' 
   },
   
-  // NUEVA LÓGICA: Ver habitaciones (REQUIERE AUTH)
+  // Ver habitaciones (REQUIERE AUTH)
   { 
     path: 'hotel/:hotelId/rooms', 
     loadComponent: () => import('./pages/rooms/rooms').then(c => c.RoomsPageComponent),
     canActivate: [AuthGuard]
   },
   
-  // CORREGIDO: Reservar habitación específica (REQUIERE AUTH)
+  // CORREGIDO: Una sola ruta para booking con roomId
   { 
     path: 'booking/room/:roomId', 
     loadComponent: () => import('./pages/booking/booking').then(c => c.BookingComponent),
     canActivate: [AuthGuard],
-    canDeactivate: [CanDeactivateGuard]
+    canDeactivate: [canDeactivateGuard]  // FUNCTIONAL GUARD
   },
 
-  // MANTENER: Ruta antigua por compatibilidad (ahora redirige a rooms)
-  { 
-    path: 'booking/:hotelId', 
-    redirectTo: 'hotel/:hotelId/rooms',
-    pathMatch: 'full'
-  },
+  // Ruta de compatibilidad eliminada para evitar duplicados
   
   { 
     path: '404',

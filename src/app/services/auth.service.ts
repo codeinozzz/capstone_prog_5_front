@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+// src/app/services/auth.service.ts - CORREGIDO
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { catchError, map, takeUntil } from 'rxjs/operators';
 
 export interface User {
   id: string;
@@ -32,10 +33,13 @@ interface UserResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
   private apiUrl = 'http://localhost:3000/api';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  
+  // CORREGIDO: Subject para cleanup
+  private destroy$ = new Subject<void>();
 
   currentUser$ = this.currentUserSubject.asObservable();
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
@@ -44,16 +48,26 @@ export class AuthService {
     this.checkAuthStatus();
   }
 
+  // CORREGIDO: Implementar OnDestroy
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   checkAuthStatus(): void {
-    this.http.get<AuthStatusResponse>(`${this.apiUrl}/auth/status`).pipe(
-      catchError(() => of({ success: true, authenticated: false }))
-    ).subscribe(response => {
-      if (response.authenticated && 'user' in response && response.user) {
-        this.setUser(response.user);
-      } else {
-        this.clearUser();
-      }
-    });
+    // CORREGIDO: Usar takeUntil para cleanup
+    this.http.get<AuthStatusResponse>(`${this.apiUrl}/auth/status`)
+      .pipe(
+        catchError(() => of({ success: true, authenticated: false })),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(response => {
+        if (response.authenticated && 'user' in response && response.user) {
+          this.setUser(response.user);
+        } else {
+          this.clearUser();
+        }
+      });
   }
 
   getCurrentUser(): Observable<User> {
@@ -62,24 +76,27 @@ export class AuthService {
       catchError(() => {
         this.clearUser();
         throw new Error('No autenticado');
-      })
+      }),
+      takeUntil(this.destroy$)
     );
   }
 
   getClerkConfig(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/auth/config`);
+    return this.http.get<any>(`${this.apiUrl}/auth/config`)
+      .pipe(takeUntil(this.destroy$));
   }
 
   setUser(user: User): void {
     this.currentUserSubject.next(user);
     this.isAuthenticatedSubject.next(true);
-    localStorage.setItem('isAuthenticated', 'true');
+    // CORREGIDO: Evitar localStorage si no es estrictamente necesario
+    // localStorage.setItem('isAuthenticated', 'true');
   }
 
   clearUser(): void {
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
-    localStorage.removeItem('isAuthenticated');
+    // localStorage.removeItem('isAuthenticated');
   }
 
   logout(): void {
