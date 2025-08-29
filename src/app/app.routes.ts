@@ -1,4 +1,4 @@
-// src/app/app.routes.ts - CORREGIDO CON MY-BOOKINGS
+// src/app/app.routes.ts - ACTUALIZADO CON BÚSQUEDA DE HABITACIONES
 import { Routes } from '@angular/router';
 import { canDeactivateGuard } from './guards/can-deactivate.guard';
 import { AuthGuard } from './guards/auth.guard';
@@ -17,8 +17,14 @@ export const routes: Routes = [
     redirectTo: '/', 
     pathMatch: 'full' 
   },
+
+  // NUEVA: Búsqueda global de habitaciones
+  { 
+    path: 'search-rooms', 
+    loadComponent: () => import('./pages/search-rooms/search-rooms').then(c => c.RoomsSearchPageComponent)
+  },
   
-  // Ver habitaciones (REQUIERE AUTH)
+  // Ver habitaciones de un hotel específico (REQUIERE AUTH)
   { 
     path: 'hotel/:hotelId/rooms', 
     loadComponent: () => import('./pages/rooms/rooms').then(c => c.RoomsPageComponent),
@@ -33,7 +39,7 @@ export const routes: Routes = [
     canDeactivate: [canDeactivateGuard]
   },
 
-  // NUEVO: Mis reservas (REQUIERE AUTH)
+  // Mis reservas (REQUIERE AUTH)
   { 
     path: 'my-bookings', 
     loadComponent: () => import('./pages/my-bookings/my-bookings').then(c => c.MyBookingsComponent),

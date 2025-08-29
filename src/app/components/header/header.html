@@ -1,3 +1,4 @@
+<!-- src/app/components/header/header.html - ACTUALIZADO CON BÚSQUEDA DE HABITACIONES -->
 <mat-toolbar color="primary" class="app-header">
   
   <div class="header-left">
@@ -28,6 +29,16 @@
       class="nav-link">
       <mat-icon>hotel</mat-icon>
       <span>Hotels</span>
+    </button>
+
+    <!-- NUEVO: Enlace a búsqueda de habitaciones -->
+    <button 
+      mat-button 
+      routerLink="/search-rooms" 
+      routerLinkActive="active"
+      class="nav-link">
+      <mat-icon>search</mat-icon>
+      <span>Rooms</span>
     </button>
   </div>
 

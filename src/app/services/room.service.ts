@@ -1,4 +1,4 @@
-// src/app/services/room.service.ts
+// src/app/services/room.service.ts - ACTUALIZADO CON HOTEL INFO
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -15,6 +15,13 @@ export interface Room {
   amenities: string[];
   createdAt: Date;
   updatedAt: Date;
+  // NUEVO: Información del hotel cuando viene del backend
+  hotel?: {
+    id: string;
+    name: string;
+    location: string;
+    rating?: number;
+  };
 }
 
 interface RoomApiResponse {
@@ -45,7 +52,7 @@ export class RoomService {
       );
   }
 
-  // NUEVO: Obtener habitaciones disponibles por fechas
+  // Obtener habitaciones disponibles por fechas
   getAvailableRooms(hotelId: string, checkIn: string, checkOut: string): Observable<Room[]> {
     const params = new URLSearchParams({
       hotelId: hotelId,
@@ -79,13 +86,15 @@ export class RoomService {
       );
   }
 
-  // Buscar habitaciones con filtros
+  // Buscar habitaciones con filtros - INCLUYE INFO DEL HOTEL
   searchRooms(filters: {
     numberOfPeople?: number;
     type?: string;
     minPrice?: number;
     maxPrice?: number;
     location?: string;
+    checkIn?: string;
+    checkOut?: string;
   }): Observable<Room[]> {
     const params = new URLSearchParams();
     
@@ -103,6 +112,12 @@ export class RoomService {
     }
     if (filters.location) {
       params.append('location', filters.location);
+    }
+    if (filters.checkIn) {
+      params.append('checkIn', filters.checkIn);
+    }
+    if (filters.checkOut) {
+      params.append('checkOut', filters.checkOut);
     }
 
     return this.http.get<RoomApiResponse>(`${this.apiUrl}/rooms/search?${params.toString()}`)

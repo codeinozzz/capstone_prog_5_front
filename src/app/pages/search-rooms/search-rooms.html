@@ -1,0 +1,122 @@
+<!-- src/app/pages/rooms-search/rooms-search.html -->
+<app-header></app-header>
+
+<div class="rooms-search-page">
+  
+  <div class="page-header">
+    <h2>Buscar Habitaciones</h2>
+    <p>Encuentra la habitación perfecta para tu estadía</p>
+  </div>
+
+  <!-- Formulario de búsqueda -->
+  <app-search-rooms 
+    (searchRooms)="onSearchRooms($event)">
+  </app-search-rooms>
+
+  <!-- Información de búsqueda -->
+  <div *ngIf="isSearching && !loading && !error" class="search-info">
+    <mat-icon>search</mat-icon>
+    <span>
+      Resultados de búsqueda: {{ rooms.length }} habitacion(es) encontrada(s)
+    </span>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Buscando habitaciones disponibles...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <h3>Error en la búsqueda</h3>
+    <p>{{ error }}</p>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="loadDefaultRooms()">
+      <mat-icon>refresh</mat-icon>
+      Intentar nuevamente
+    </button>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && !error && rooms.length === 0 && isSearching" class="empty-container">
+    <mat-icon>hotel_class</mat-icon>
+    <h3>No se encontraron habitaciones</h3>
+    <p>Intenta ajustar tus criterios de búsqueda</p>
+  </div>
+
+  <!-- Habitaciones encontradas -->
+  <div *ngIf="!loading && !error && rooms.length > 0" class="rooms-results">
+    
+    <div class="results-summary" *ngIf="rooms.length > 0">
+      <p>
+        {{ rooms.length | number }} 
+        {{ rooms.length === 1 ? 'habitación encontrada' : 'habitaciones encontradas' }}
+      </p>
+    </div>
+
+    <div class="rooms-grid">
+      <mat-card *ngFor="let room of rooms; trackBy: trackByRoomId" class="room-card">
+        
+        <mat-card-header>
+          <mat-card-title>
+            {{ getRoomTypeLabel(room.type) }}
+          </mat-card-title>
+          <mat-card-subtitle>
+            <mat-icon>hotel</mat-icon>
+            {{ getHotelName(room) | titlecase }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          
+          <div class="room-info">
+            <div class="info-item">
+              <mat-icon>people</mat-icon>
+              <span>Hasta {{ room.capacity }} {{ room.capacity === 1 ? 'persona' : 'personas' }}</span>
+            </div>
+
+            <div class="info-item" *ngIf="room.beds">
+              <mat-icon>bed</mat-icon>
+              <span>{{ room.beds }}</span>
+            </div>
+
+            <div class="info-item" *ngIf="getHotelLocation(room) !== 'Ubicación no disponible'">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ getHotelLocation(room) | titlecase }}</span>
+            </div>
+
+            <div class="info-item" *ngIf="room.amenities?.length">
+              <mat-icon>star</mat-icon>
+              <span>{{ room.amenities.slice(0, 2).join(', ') }}</span>
+            </div>
+          </div>
+
+          <div class="room-price">
+            <strong>{{ room.price | currency:'USD':'symbol':'1.0-0' }}</strong>
+            <small>por noche</small>
+          </div>
+
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="onReserveRoom(room)"
+            class="reserve-btn">
+            <mat-icon>book_online</mat-icon>
+            Reservar
+          </button>
+        </mat-card-actions>
+
+      </mat-card>
+    </div>
+  </div>
+
+</div>
+
+<app-footer></app-footer>
