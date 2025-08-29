@@ -1,4 +1,4 @@
-// src/app/app.routes.ts - CORREGIDO
+// src/app/app.routes.ts - CORREGIDO CON MY-BOOKINGS
 import { Routes } from '@angular/router';
 import { canDeactivateGuard } from './guards/can-deactivate.guard';
 import { AuthGuard } from './guards/auth.guard';
@@ -25,15 +25,20 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   
-  // CORREGIDO: Una sola ruta para booking con roomId
+  // Booking con roomId
   { 
     path: 'booking/room/:roomId', 
     loadComponent: () => import('./pages/booking/booking').then(c => c.BookingComponent),
     canActivate: [AuthGuard],
-    canDeactivate: [canDeactivateGuard]  // FUNCTIONAL GUARD
+    canDeactivate: [canDeactivateGuard]
   },
 
-  // Ruta de compatibilidad eliminada para evitar duplicados
+  // NUEVO: Mis reservas (REQUIERE AUTH)
+  { 
+    path: 'my-bookings', 
+    loadComponent: () => import('./pages/my-bookings/my-bookings').then(c => c.MyBookingsComponent),
+    canActivate: [AuthGuard]
+  },
   
   { 
     path: '404',

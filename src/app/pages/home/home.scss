@@ -141,14 +141,21 @@ h2 {
   }
 }
 
-// Hotels Grid
+// ✅ HOTELS GRID MEJORADO
 .hotels-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-auto-rows: 1fr; // ✅ FILAS DE LA MISMA ALTURA
   gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  justify-items: center;
+  padding: 0; // ✅ SIN PADDING EXTRA
+  
+  // ✅ CADA CARD OCUPA TODA LA ALTURA DISPONIBLE
+  app-hotel-card {
+    display: flex;
+    height: 100%;
+  }
 }
 
 // Responsive
@@ -160,6 +167,7 @@ h2 {
   .hotels-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+    grid-auto-rows: auto; // ✅ EN MÓVIL ALTURA AUTOMÁTICA
   }
   
   h2 {

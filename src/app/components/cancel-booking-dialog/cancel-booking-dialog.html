@@ -1,0 +1,101 @@
+<div class="cancel-dialog">
+  
+  <div mat-dialog-title class="dialog-title">
+    <mat-icon [class.can-cancel]="data.canCancel" [class.cannot-cancel]="!data.canCancel">
+      {{ data.canCancel ? 'cancel' : 'warning' }}
+    </mat-icon>
+    <h2>{{ data.canCancel ? 'Cancel Booking' : 'Cannot Cancel Booking' }}</h2>
+  </div>
+
+  <div mat-dialog-content class="dialog-content">
+    
+    <!-- Booking Information -->
+    <div class="booking-details">
+      <h3>Booking Details</h3>
+      
+      <div class="detail-row">
+        <mat-icon>confirmation_number</mat-icon>
+        <div>
+          <strong>Confirmation Number</strong>
+          <span>{{ data.booking.confirmationNumber | uppercase }}</span>
+        </div>
+      </div>
+
+      <div class="detail-row" *ngIf="data.booking.hotel">
+        <mat-icon>hotel</mat-icon>
+        <div>
+          <strong>Hotel</strong>
+          <span>{{ data.booking.hotel.name | titlecase }}</span>
+          <small *ngIf="data.booking.hotel.location">
+            {{ data.booking.hotel.location | titlecase }}
+          </small>
+        </div>
+      </div>
+
+      <div class="detail-row">
+        <mat-icon>person</mat-icon>
+        <div>
+          <strong>Guest</strong>
+          <span>{{ data.booking.firstName }} {{ data.booking.lastName }}</span>
+        </div>
+      </div>
+
+      <div class="detail-row">
+        <mat-icon>date_range</mat-icon>
+        <div>
+          <strong>Check-in</strong>
+          <span>{{ formatDate(data.booking.checkInDate) }}</span>
+        </div>
+      </div>
+
+      <div class="detail-row">
+        <mat-icon>date_range</mat-icon>
+        <div>
+          <strong>Check-out</strong>
+          <span>{{ formatDate(data.booking.checkOutDate) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Message -->
+    <div class="status-message" [class.can-cancel]="data.canCancel" [class.cannot-cancel]="!data.canCancel">
+      <mat-icon>{{ data.canCancel ? 'info' : 'warning' }}</mat-icon>
+      <div>
+        <p><strong>{{ getDaysMessage() }}</strong></p>
+        <p *ngIf="data.canCancel" class="policy-text">
+          You can cancel this booking free of charge.
+        </p>
+        <p *ngIf="!data.canCancel" class="policy-text">
+          Bookings can only be cancelled 3 or more days before the check-in date.
+        </p>
+      </div>
+    </div>
+
+    <!-- Confirmation Message -->
+    <div *ngIf="data.canCancel" class="confirmation-message">
+      <p>Are you sure you want to cancel this booking?</p>
+      <p><small>This action cannot be undone.</small></p>
+    </div>
+
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button 
+      mat-button 
+      (click)="onCancel()"
+      class="cancel-button">
+      {{ data.canCancel ? 'Keep Booking' : 'Close' }}
+    </button>
+    
+    <button 
+      *ngIf="data.canCancel"
+      mat-raised-button 
+      color="warn"
+      (click)="onConfirm()"
+      class="confirm-button">
+      <mat-icon>cancel</mat-icon>
+      Yes, Cancel Booking
+    </button>
+  </div>
+
+</div>

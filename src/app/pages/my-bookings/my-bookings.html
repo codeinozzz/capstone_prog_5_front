@@ -1,0 +1,149 @@
+<app-header></app-header>
+
+<div class="my-bookings-page">
+  
+  <div class="page-header">
+    <h2>My Bookings</h2>
+    <p>Manage your hotel reservations</p>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading your bookings...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <h3>Error loading bookings</h3>
+    <p>{{ error }}</p>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="retryLoadBookings()">
+      <mat-icon>refresh</mat-icon>
+      Try Again
+    </button>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && !error && bookings.length === 0" class="empty-container">
+    <mat-icon>hotel</mat-icon>
+    <h3>No bookings found</h3>
+    <p>You haven't made any hotel reservations yet.</p>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      routerLink="/">
+      <mat-icon>search</mat-icon>
+      Browse Hotels
+    </button>
+  </div>
+
+  <!-- Bookings grid -->
+  <div *ngIf="!loading && !error && bookings.length > 0" class="bookings-container">
+    
+    <div class="bookings-summary">
+      <p>
+        {{ bookings.length | number }} 
+        {{ bookings.length === 1 ? 'booking' : 'bookings' }} found
+      </p>
+    </div>
+
+    <div class="bookings-grid">
+      <mat-card *ngFor="let booking of bookings" class="booking-card">
+        
+        <mat-card-header>
+          <mat-card-title>
+            {{ booking.hotel?.name || 'Hotel' | titlecase }}
+          </mat-card-title>
+          <mat-card-subtitle>
+            <mat-icon>location_on</mat-icon>
+            {{ booking.hotel?.location || 'Location' | titlecase }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          
+          <div class="booking-info">
+            <div class="info-row">
+              <mat-icon>confirmation_number</mat-icon>
+              <span>
+                <strong>Confirmation:</strong> 
+                {{ booking.confirmationNumber | uppercase }}
+              </span>
+            </div>
+
+            <div class="info-row">
+              <mat-icon>person</mat-icon>
+              <span>
+                <strong>Guest:</strong> 
+                {{ booking.firstName }} {{ booking.lastName }}
+              </span>
+            </div>
+
+            <div class="info-row">
+              <mat-icon>date_range</mat-icon>
+              <span>
+                <strong>Check-in:</strong> 
+                {{ formatDate(booking.checkInDate) }}
+              </span>
+            </div>
+
+            <div class="info-row">
+              <mat-icon>date_range</mat-icon>
+              <span>
+                <strong>Check-out:</strong> 
+                {{ formatDate(booking.checkOutDate) }}
+              </span>
+            </div>
+
+            <div class="info-row">
+              <mat-icon>schedule</mat-icon>
+              <span>
+                <strong>Booked:</strong> 
+                {{ formatDate(booking.createdAt) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="booking-status">
+            <mat-chip 
+              [color]="getStatusColor(booking.status)"
+              selected>
+              <mat-icon>{{ getStatusIcon(booking.status) }}</mat-icon>
+              {{ booking.status | titlecase }}
+            </mat-chip>
+          </div>
+
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button 
+            *ngIf="booking.status === 'confirmed'"
+            mat-raised-button 
+            color="warn" 
+            (click)="onCancelBooking(booking)"
+            class="cancel-btn">
+            <mat-icon>cancel</mat-icon>
+            Cancel Booking
+          </button>
+
+          <button 
+            *ngIf="booking.status === 'cancelled'"
+            mat-stroked-button 
+            disabled
+            class="cancelled-btn">
+            <mat-icon>info</mat-icon>
+            Cancelled
+          </button>
+        </mat-card-actions>
+
+      </mat-card>
+    </div>
+  </div>
+
+</div>
+
+<app-footer></app-footer>
