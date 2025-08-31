@@ -24,7 +24,6 @@ export class ClerkService {
   private currentUser = new BehaviorSubject<ClerkUser | null>(null);
   private isAuthenticated = new BehaviorSubject<boolean>(false);
 
-  // Observables públicos
   clerkLoaded$ = this.clerkLoaded.asObservable();
   currentUser$ = this.currentUser.asObservable();
   isAuthenticated$ = this.isAuthenticated.asObservable();
@@ -48,10 +47,10 @@ export class ClerkService {
       this.checkAuthStatus();
       
       this.clerkLoaded.next(true);
-      console.log('Clerk inicializado correctamente');
+      console.log('Clerk initialized successfully');
       
     } catch (error) {
-      console.error('Error inicializando Clerk:', error);
+      console.error('Error initializing Clerk:', error);
     }
   }
 
@@ -124,13 +123,13 @@ export class ClerkService {
   private setUser(user: ClerkUser): void {
     this.currentUser.next(user);
     this.isAuthenticated.next(true);
-    console.log('Usuario autenticado:', user);
+    console.log('User authenticated:', user);
   }
 
   private clearUser(): void {
     this.currentUser.next(null);
     this.isAuthenticated.next(false);
-    console.log('Usuario desautenticado');
+    console.log('User logged out');
   }
 
   get user(): ClerkUser | null {

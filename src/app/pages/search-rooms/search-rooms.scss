@@ -1,4 +1,3 @@
-// src/app/pages/rooms-search/rooms-search.scss
 .rooms-search-page {
   min-height: calc(100vh - 128px);
   padding: 20px;
@@ -239,7 +238,6 @@
   }
 }
 
-// Responsive
 @media (max-width: 768px) {
   .rooms-search-page {
     padding: 10px;

@@ -1,5 +1,4 @@
-// src/app/components/hotel-card/hotel-card.ts
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -19,14 +18,15 @@ import { Hotel } from '../../services/hotel.service';
     MatChipsModule
   ],
   templateUrl: './hotel-card.html',
-  styleUrl: './hotel-card.scss'
+  styleUrl: './hotel-card.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush  // OnPush - perfect for cards with @Input
 })
 export class HotelCardComponent {
   @Input() hotel: Hotel = {
     id: '0',
-    name: 'Default hotel',
-    location: 'Default location',
-    description: 'Default description',
+    name: 'Default Hotel',
+    location: 'Default Location',
+    description: 'Default Description',
     rating: 3,
     amenities: [],
     createdAt: new Date(),
@@ -39,10 +39,8 @@ export class HotelCardComponent {
 
   constructor(private router: Router) {}
   
-  // CORREGIDO: Navegar a habitaciones, no a booking directo
-  onVerHabitaciones() {
-    console.log('Ver habitaciones:', this.hotel.name);
-    // Redirige a la nueva página de habitaciones
+  onViewRooms() {
+    console.log('View rooms:', this.hotel.name);
     this.router.navigate(['/hotel', this.hotel.id, 'rooms']);
   }
 

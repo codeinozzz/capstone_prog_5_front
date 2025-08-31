@@ -34,7 +34,6 @@ export class BookingService {
 
   constructor(private http: HttpClient) {}
 
-  // Crear reserva - SIMPLE
   createBooking(bookingData: BookingData): Observable<BookingResponse> {
     return this.http.post<BookingResponse>(`${this.apiUrl}/bookings`, bookingData).pipe(
       map(response => response),
@@ -45,7 +44,6 @@ export class BookingService {
     );
   }
 
-  // Obtener mis reservas - SIMPLE
   getMyBookings(): Observable<{ success: boolean; data: any[]; total: number }> {
     return this.http.get<{ success: boolean; data: any[]; total: number }>(`${this.apiUrl}/bookings/my`).pipe(
       map(response => response),
@@ -56,7 +54,6 @@ export class BookingService {
     );
   }
 
-  // Cancelar reserva - SIMPLE
   cancelBooking(bookingId: string): Observable<{ success: boolean; message: string }> {
     return this.http.put<{ success: boolean; message: string }>(`${this.apiUrl}/bookings/${bookingId}/cancel`, {}).pipe(
       map(response => response),

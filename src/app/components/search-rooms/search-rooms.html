@@ -1,23 +1,21 @@
-<!-- src/app/components/search-rooms/search-rooms.html -->
 <mat-card class="search-card">
   <mat-card-header>
     <mat-card-title>
       <mat-icon>search</mat-icon>
-      Buscar Habitaciones
+      Search Rooms
     </mat-card-title>
     <mat-card-subtitle>
-      Encuentra la habitación perfecta para tu estadía
+      Find the perfect room for your stay
     </mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
     <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-form">
       
-      <!-- Número de personas -->
       <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Número de personas</mat-label>
+        <mat-label>Number of Guests</mat-label>
         <mat-select formControlName="numberOfPeople">
-          <mat-option value="">Cualquier cantidad</mat-option>
+          <mat-option value="">Any number</mat-option>
           <mat-option *ngFor="let capacity of roomCapacities" [value]="capacity.value">
             {{ capacity.label }}
           </mat-option>
@@ -25,17 +23,15 @@
         <mat-icon matSuffix>people</mat-icon>
       </mat-form-field>
 
-      <!-- Ubicación -->
       <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Ubicación del hotel</mat-label>
+        <mat-label>Hotel Location</mat-label>
         <input 
           matInput 
           formControlName="location"
-          placeholder="Ej: New York, Miami...">
+          placeholder="E.g., New York, Miami...">
         <mat-icon matSuffix>location_on</mat-icon>
       </mat-form-field>
 
-      <!-- Check-in -->
       <mat-form-field appearance="outline" class="form-field">
         <mat-label>Check-in</mat-label>
         <input 
@@ -70,7 +66,7 @@
       (click)="onSearch()"
       class="search-btn">
       <mat-icon>search</mat-icon>
-      Buscar Habitaciones
+      Search Rooms
     </button>
 
     <button 
@@ -79,7 +75,7 @@
       (click)="onClear()"
       class="clear-btn">
       <mat-icon>clear</mat-icon>
-      Limpiar
+      Clear
     </button>
   </mat-card-actions>
 

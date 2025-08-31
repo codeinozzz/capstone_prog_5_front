@@ -1,4 +1,3 @@
-// src/app/components/cancel-booking-dialog/cancel-booking-dialog.scss
 .cancel-dialog {
   width: 100%;
   max-width: 450px;
@@ -191,7 +190,6 @@
   }
 }
 
-// Responsive
 @media (max-width: 480px) {
   .cancel-dialog {
     max-width: calc(100vw - 32px);
@@ -245,7 +243,6 @@
   }
 }
 
-// Global dialog styling overrides
 :host ::ng-deep {
   .mat-mdc-dialog-container {
     border-radius: 12px !important;

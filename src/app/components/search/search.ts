@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -18,7 +18,8 @@ import { CommonModule } from '@angular/common';
     MatIconModule
   ],
   templateUrl: './search.html',
-  styleUrl: './search.scss'
+  styleUrl: './search.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush  
 })
 export class SearchComponent {
   @Output() searchTerm = new EventEmitter<string>();
@@ -26,15 +27,18 @@ export class SearchComponent {
 
   searchText = '';
 
+  constructor(private cdr: ChangeDetectorRef) {}  
+
   onSearch() {
     if (this.searchText.trim()) {
-      console.log('Buscando:', this.searchText);
+      console.log('Searching:', this.searchText);
       this.searchTerm.emit(this.searchText.trim());
     }
   }
 
   onClear() {
     this.searchText = '';
+    this.cdr.markForCheck(); 
     this.clearSearch.emit();
   }
 

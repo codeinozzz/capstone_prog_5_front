@@ -7,13 +7,11 @@
     <p>Manage your hotel reservations</p>
   </div>
 
-  <!-- Loading state -->
   <div *ngIf="loading" class="loading-container">
     <mat-spinner></mat-spinner>
     <p>Loading your bookings...</p>
   </div>
 
-  <!-- Error state -->
   <div *ngIf="error && !loading" class="error-container">
     <mat-icon>error_outline</mat-icon>
     <h3>Error loading bookings</h3>
@@ -27,7 +25,6 @@
     </button>
   </div>
 
-  <!-- Empty state -->
   <div *ngIf="!loading && !error && bookings.length === 0" class="empty-container">
     <mat-icon>hotel</mat-icon>
     <h3>No bookings found</h3>
@@ -41,7 +38,6 @@
     </button>
   </div>
 
-  <!-- Bookings grid -->
   <div *ngIf="!loading && !error && bookings.length > 0" class="bookings-container">
     
     <div class="bookings-summary">

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,7 +17,8 @@ import { FooterComponent } from '../../components/footer/footer';
     FooterComponent
   ],
   templateUrl: './not-found.html',
-  styleUrl: './not-found.scss'
+  styleUrl: './not-found.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush  
 })
 export class NotFoundComponent {
   
@@ -25,6 +26,7 @@ export class NotFoundComponent {
 
   goHome() {
     this.router.navigate(['/']);
+    
   }
 
   goBack() {

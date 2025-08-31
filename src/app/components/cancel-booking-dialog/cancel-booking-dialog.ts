@@ -1,5 +1,5 @@
 // src/app/components/cancel-booking-dialog/cancel-booking-dialog.ts
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -32,7 +32,8 @@ interface DialogData {
     MatIconModule
   ],
   templateUrl: './cancel-booking-dialog.html',
-  styleUrl: './cancel-booking-dialog.scss'
+  styleUrl: './cancel-booking-dialog.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush  // OnPush - para dialogs
 })
 export class CancelBookingDialogComponent {
   

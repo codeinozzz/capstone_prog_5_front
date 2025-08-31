@@ -1,4 +1,3 @@
-// src/app/app.config.ts - CORREGIDO
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -11,10 +10,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    // withInterceptorsFromDi() permite usar interceptors del antiguo sistema DI
-    // Necesario para compatibilidad con servicios que usan interceptors
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimationsAsync(),
-    AuthGuard  // Solo AuthGuard, can-deactivate ahora es funcional
+    AuthGuard  
   ]
 };

@@ -20,7 +20,6 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> | boolean {
     
-    // Si Clerk no ha cargado, esperar
     if (!this.clerkService.loaded) {
       return this.clerkService.clerkLoaded$.pipe(
         take(1),
@@ -35,7 +34,6 @@ export class AuthGuard implements CanActivate {
       );
     }
 
-    // Si ya cargó, verificar directamente
     if (this.clerkService.authenticated) {
       return true;
     } else {

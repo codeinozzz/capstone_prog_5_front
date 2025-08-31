@@ -1,4 +1,3 @@
-// src/app/pages/login/login.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -37,7 +36,6 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Capturar returnUrl de query params
     this.route.queryParams.subscribe(params => {
       this.returnUrl = params['returnUrl'] || '/';
       console.log('Login page - returnUrl:', this.returnUrl);
@@ -60,7 +58,6 @@ export class LoginComponent implements OnInit {
 
   private checkAuthAndRedirect(): void {
     if (this.clerkService.authenticated) {
-      // Si ya está autenticado, redirigir inmediatamente
       this.router.navigate([this.returnUrl]);
     }
   }
@@ -95,7 +92,6 @@ export class LoginComponent implements OnInit {
         }
       );
       
-      // Redirigir a la URL de retorno después de un breve delay
       console.log('Login successful, redirecting to:', this.returnUrl);
       setTimeout(() => {
         this.router.navigate([this.returnUrl]);

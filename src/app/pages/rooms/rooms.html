@@ -2,13 +2,11 @@
 
 <div class="rooms-page">
   
-  <!-- Loading hotel info -->
   <div *ngIf="loading" class="loading-container">
     <mat-spinner></mat-spinner>
     <p>Loading hotel information...</p>
   </div>
 
-  <!-- Error state -->
   <div *ngIf="error && !loading" class="error-container">
     <mat-icon>error_outline</mat-icon>
     <h3>Error</h3>
@@ -19,10 +17,8 @@
     </button>
   </div>
 
-  <!-- Main content -->
   <div *ngIf="hotel && !loading && !error" class="rooms-container">
     
-    <!-- Hotel header -->
     <div class="hotel-header">
       <button mat-button (click)="goBack()" class="back-btn">
         <mat-icon>arrow_back</mat-icon>
@@ -38,15 +34,14 @@
       </div>
     </div>
 
-    <!-- Date selector -->
     <mat-card class="date-selector">
       <mat-card-header>
         <mat-card-title>
           <mat-icon>date_range</mat-icon>
-          Selecciona tus fechas
+          Select your dates
         </mat-card-title>
         <mat-card-subtitle>
-          Elige las fechas para ver habitaciones disponibles
+          Choose the dates to see available rooms
         </mat-card-subtitle>
       </mat-card-header>
       
@@ -77,32 +72,30 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Room availability status -->
     <div class="availability-status" *ngIf="dateForm.valid">
       <div *ngIf="roomsLoading" class="loading-rooms">
         <mat-spinner diameter="24"></mat-spinner>
-        <span>Verificando disponibilidad...</span>
+        <span>Checking availability...</span>
       </div>
       
       <div *ngIf="!roomsLoading && rooms.length > 0" class="rooms-found">
         <mat-icon>check_circle</mat-icon>
-        <span>{{ rooms.length }} habitacion(es) disponible(s)</span>
+        <span>{{ rooms.length }} room(s) available</span>
       </div>
       
       <div *ngIf="!roomsLoading && rooms.length === 0 && isValidDateRange()" class="no-rooms">
         <mat-icon>info</mat-icon>
-        <span>No hay habitaciones disponibles para estas fechas</span>
+        <span>No rooms available for these dates</span>
       </div>
     </div>
 
-    <!-- Rooms grid -->
     <div *ngIf="rooms.length > 0" class="rooms-grid">
       <mat-card *ngFor="let room of rooms" class="room-card">
         <mat-card-header>
           <mat-card-title>{{ getRoomTypeLabel(room.type) }}</mat-card-title>
           <mat-card-subtitle>
             <mat-icon>people</mat-icon>
-            Hasta {{ room.capacity }} {{ room.capacity === 1 ? 'persona' : 'personas' }}
+            Up to {{ room.capacity }} {{ room.capacity === 1 ? 'person' : 'people' }}
           </mat-card-subtitle>
         </mat-card-header>
 
@@ -110,7 +103,7 @@
           <div class="room-info">
             <div class="room-detail">
               <mat-icon>bed</mat-icon>
-              <span>{{ room.beds || 'Cama estándar' }}</span>
+              <span>{{ room.beds || 'Standard bed' }}</span>
             </div>
             
             <div class="room-detail" *ngIf="room.amenities?.length">
@@ -121,7 +114,7 @@
 
           <div class="room-price">
             <strong>{{ room.price | currency:'USD':'symbol':'1.0-0' }}</strong>
-            <small>por noche</small>
+            <small>per night</small>
           </div>
         </mat-card-content>
 
@@ -129,21 +122,20 @@
           <button 
             mat-raised-button 
             color="primary" 
-            (click)="onReservarHabitacion(room)"
+            (click)="onBookRoom(room)"
             [disabled]="!isValidDateRange()"
             class="reserve-room-btn">
             <mat-icon>book_online</mat-icon>
-            Reservar
+            Book
           </button>
         </mat-card-actions>
       </mat-card>
     </div>
 
-    <!-- Empty state when no dates selected -->
     <div *ngIf="!dateForm.valid" class="select-dates-prompt">
       <mat-icon>date_range</mat-icon>
-      <h3>Selecciona tus fechas</h3>
-      <p>Elige las fechas de check-in y check-out para ver habitaciones disponibles</p>
+      <h3>Select your dates</h3>
+      <p>Choose check-in and check-out dates to see available rooms</p>
     </div>
 
   </div>

@@ -15,7 +15,6 @@
     <div *ngIf="!isSuccess" class="booking-form">
       <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
         
-        <!-- FECHAS SIMPLES -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Check-in Date</mat-label>
           <input 
@@ -44,7 +43,6 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- DATOS PERSONALES SIMPLES -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>First Name</mat-label>
           <input 
@@ -116,7 +114,6 @@
       </form>
     </div>
 
-    <!-- SUCCESS SIMPLE -->
     <div *ngIf="isSuccess" class="success-content">
       <div class="success-icon">
         <mat-icon>check_circle</mat-icon>

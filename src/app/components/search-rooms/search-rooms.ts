@@ -1,5 +1,4 @@
-// src/app/components/search-rooms/search-rooms.ts
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -27,7 +26,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatNativeDateModule
   ],
   templateUrl: './search-rooms.html',
-  styleUrl: './search-rooms.scss'
+  styleUrl: './search-rooms.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush  
 })
 export class SearchRoomsComponent {
   @Output() searchRooms = new EventEmitter<any>();
@@ -36,13 +36,16 @@ export class SearchRoomsComponent {
   minDate = new Date();
 
   roomCapacities = [
-    { value: 1, label: '1 persona' },
-    { value: 2, label: '2 personas' },
-    { value: 3, label: '3 personas' },
-    { value: 4, label: '4 personas' }
+    { value: 1, label: '1 person' },
+    { value: 2, label: '2 people' },
+    { value: 3, label: '3 people' },
+    { value: 4, label: '4 people' }
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef 
+  ) {
     this.searchForm = this.fb.group({
       numberOfPeople: [''],
       checkIn: [''],
@@ -55,7 +58,6 @@ export class SearchRoomsComponent {
     if (this.searchForm.valid) {
       const filters = this.searchForm.value;
       
-      // Convertir fechas a string si existen
       if (filters.checkIn) {
         filters.checkIn = filters.checkIn.toISOString().split('T')[0];
       }
@@ -69,6 +71,7 @@ export class SearchRoomsComponent {
 
   onClear() {
     this.searchForm.reset();
+    this.cdr.markForCheck(); 
     this.searchRooms.emit({});
   }
 

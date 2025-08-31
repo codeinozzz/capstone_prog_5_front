@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -31,7 +31,8 @@ import { ClerkService } from '../../services/clerk.service';
     MatNativeDateModule
   ],
   templateUrl: './booking.html',
-  styleUrl: './booking.scss'
+  styleUrl: './booking.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush  //  OnPush para mejor performance
 })
 export class BookingComponent implements CanComponentDeactivate, OnInit {
   @Input() hotelId: string = '';
@@ -44,14 +45,14 @@ export class BookingComponent implements CanComponentDeactivate, OnInit {
   isSuccess = false;
   confirmationNumber = '';
   
-  // Fechas simples
   minDate = new Date();
 
   constructor(
     private fb: FormBuilder,
     private bookingService: BookingService,
     private snackBar: MatSnackBar,
-    private clerkService: ClerkService
+    private clerkService: ClerkService,
+    private cdr: ChangeDetectorRef  
   ) {
     this.bookingForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
@@ -64,7 +65,6 @@ export class BookingComponent implements CanComponentDeactivate, OnInit {
   }
 
   ngOnInit() {
-    // SIMPLE: Si está autenticado, llenar datos básicos
     if (this.clerkService.authenticated) {
       const user = this.clerkService.user;
       if (user) {
@@ -101,6 +101,7 @@ export class BookingComponent implements CanComponentDeactivate, OnInit {
   onSubmit(): void {
     if (this.bookingForm.valid && !this.isLoading) {
       this.isLoading = true;
+      this.cdr.markForCheck();
 
       const bookingData: BookingData = {
         ...this.bookingForm.value,
@@ -116,17 +117,20 @@ export class BookingComponent implements CanComponentDeactivate, OnInit {
           if (response.success) {
             this.isSuccess = true;
             this.confirmationNumber = response.data?.confirmationNumber || 'N/A';
+            this.cdr.markForCheck();
             this.snackBar.open('Booking created successfully!', 'Close', {
               duration: 3000,
               panelClass: ['success-snackbar']
             });
             this.bookingCompleted.emit(response);
           } else {
+            this.cdr.markForCheck();
             this.showError('Error creating booking');
           }
         },
         error: (error) => {
           this.isLoading = false;
+          this.cdr.markForCheck(); 
           this.showError(error.error?.message || 'Error creating booking');
         }
       });
@@ -146,6 +150,7 @@ export class BookingComponent implements CanComponentDeactivate, OnInit {
     this.isSuccess = false;
     this.confirmationNumber = '';
     this.bookingForm.reset();
+    this.cdr.markForCheck(); 
   }
 
   canDeactivate(): boolean {

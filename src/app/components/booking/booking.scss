@@ -150,7 +150,6 @@
   }
 }
 
-// Estados de error
 .mat-mdc-form-field {
   &.mat-form-field-invalid {
     .mat-mdc-form-field-outline-thick {
@@ -214,7 +213,6 @@
   }
 }
 
-// Estilos globales para snackbars
 :host ::ng-deep {
   .success-snackbar {
     background-color: #4caf50 !important;

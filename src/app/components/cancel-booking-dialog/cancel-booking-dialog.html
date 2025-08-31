@@ -9,7 +9,6 @@
 
   <div mat-dialog-content class="dialog-content">
     
-    <!-- Booking Information -->
     <div class="booking-details">
       <h3>Booking Details</h3>
       
@@ -57,7 +56,6 @@
       </div>
     </div>
 
-    <!-- Status Message -->
     <div class="status-message" [class.can-cancel]="data.canCancel" [class.cannot-cancel]="!data.canCancel">
       <mat-icon>{{ data.canCancel ? 'info' : 'warning' }}</mat-icon>
       <div>
@@ -71,7 +69,6 @@
       </div>
     </div>
 
-    <!-- Confirmation Message -->
     <div *ngIf="data.canCancel" class="confirmation-message">
       <p>Are you sure you want to cancel this booking?</p>
       <p><small>This action cannot be undone.</small></p>

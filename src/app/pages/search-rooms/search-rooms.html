@@ -1,60 +1,53 @@
-<!-- src/app/pages/rooms-search/rooms-search.html -->
 <app-header></app-header>
 
 <div class="rooms-search-page">
   
   <div class="page-header">
-    <h2>Buscar Habitaciones</h2>
-    <p>Encuentra la habitación perfecta para tu estadía</p>
+    <h2>Search Rooms</h2>
+    <p>Find the perfect room for your stay</p>
   </div>
 
-  <!-- Formulario de búsqueda -->
   <app-search-rooms 
     (searchRooms)="onSearchRooms($event)">
   </app-search-rooms>
 
-  <!-- Información de búsqueda -->
   <div *ngIf="isSearching && !loading && !error" class="search-info">
     <mat-icon>search</mat-icon>
     <span>
-      Resultados de búsqueda: {{ rooms.length }} habitacion(es) encontrada(s)
+      Search results: {{ rooms.length }} room(s) found
     </span>
   </div>
 
-  <!-- Loading state -->
   <div *ngIf="loading" class="loading-container">
     <mat-spinner></mat-spinner>
-    <p>Buscando habitaciones disponibles...</p>
+    <p>Searching for available rooms...</p>
   </div>
 
-  <!-- Error state -->
   <div *ngIf="error && !loading" class="error-container">
     <mat-icon>error_outline</mat-icon>
-    <h3>Error en la búsqueda</h3>
+    <h3>Search Error</h3>
     <p>{{ error }}</p>
     <button 
       mat-raised-button 
       color="primary" 
       (click)="loadDefaultRooms()">
       <mat-icon>refresh</mat-icon>
-      Intentar nuevamente
+      Try Again
     </button>
   </div>
 
-  <!-- Empty state -->
   <div *ngIf="!loading && !error && rooms.length === 0 && isSearching" class="empty-container">
     <mat-icon>hotel_class</mat-icon>
-    <h3>No se encontraron habitaciones</h3>
-    <p>Intenta ajustar tus criterios de búsqueda</p>
+    <h3>No rooms found</h3>
+    <p>Try adjusting your search criteria</p>
   </div>
 
-  <!-- Habitaciones encontradas -->
   <div *ngIf="!loading && !error && rooms.length > 0" class="rooms-results">
     
     <div class="results-summary" *ngIf="rooms.length > 0">
       <p>
         {{ rooms.length | number }} 
-        {{ rooms.length === 1 ? 'habitación encontrada' : 'habitaciones encontradas' }}
+        {{ rooms.length === 1 ? 'room found' : 'rooms found' }}
       </p>
     </div>
 
@@ -76,7 +69,7 @@
           <div class="room-info">
             <div class="info-item">
               <mat-icon>people</mat-icon>
-              <span>Hasta {{ room.capacity }} {{ room.capacity === 1 ? 'persona' : 'personas' }}</span>
+              <span>Up to {{ room.capacity }} {{ room.capacity === 1 ? 'person' : 'people' }}</span>
             </div>
 
             <div class="info-item" *ngIf="room.beds">
@@ -84,7 +77,7 @@
               <span>{{ room.beds }}</span>
             </div>
 
-            <div class="info-item" *ngIf="getHotelLocation(room) !== 'Ubicación no disponible'">
+            <div class="info-item" *ngIf="getHotelLocation(room) !== 'Location not available'">
               <mat-icon>location_on</mat-icon>
               <span>{{ getHotelLocation(room) | titlecase }}</span>
             </div>
@@ -97,7 +90,7 @@
 
           <div class="room-price">
             <strong>{{ room.price | currency:'USD':'symbol':'1.0-0' }}</strong>
-            <small>por noche</small>
+            <small>per night</small>
           </div>
 
         </mat-card-content>
@@ -109,7 +102,7 @@
             (click)="onReserveRoom(room)"
             class="reserve-btn">
             <mat-icon>book_online</mat-icon>
-            Reservar
+            Book Now
           </button>
         </mat-card-actions>
 

@@ -1,4 +1,3 @@
-// src/app/pages/my-bookings/my-bookings.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -111,7 +110,6 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   }
 
   onCancelBooking(booking: Booking) {
-    // Verificar si puede cancelar (policy check en frontend)
     const checkInDate = new Date(booking.checkInDate);
     const now = new Date();
     const daysDiff = Math.ceil((checkInDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
@@ -140,7 +138,6 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.success) {
-            // Actualizar el estado local
             const bookingIndex = this.bookings.findIndex(b => b.id === booking.id);
             if (bookingIndex !== -1) {
               this.bookings[bookingIndex].status = 'cancelled';

@@ -1,4 +1,3 @@
-// src/app/pages/rooms/rooms.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -70,12 +69,12 @@ export class RoomsPageComponent implements OnInit {
       if (this.hotelId) {
         this.loadHotel();
       } else {
-        this.error = 'ID de hotel requerido';
+        this.error = 'Hotel ID required';
         this.loading = false;
       }
     });
 
-    // Cargar habitaciones cuando cambien las fechas
+    // Load rooms when dates change
     this.dateForm.valueChanges.subscribe(value => {
       if (value.checkIn && value.checkOut && this.isValidDateRange()) {
         this.loadAvailableRooms();
@@ -89,11 +88,11 @@ export class RoomsPageComponent implements OnInit {
       next: (hotel) => {
         this.hotel = hotel;
         this.loading = false;
-        // Cargar todas las habitaciones del hotel inicialmente
+        // Load all hotel rooms initially
         this.loadAllRooms();
       },
       error: (error) => {
-        this.error = 'Error al cargar información del hotel';
+        this.error = 'Error loading hotel information';
         this.loading = false;
         console.error('Error loading hotel:', error);
       }
@@ -107,7 +106,7 @@ export class RoomsPageComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading rooms:', error);
-        this.snackBar.open('Error cargando habitaciones', 'Close', {
+        this.snackBar.open('Error loading rooms', 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar']
         });
@@ -128,7 +127,7 @@ export class RoomsPageComponent implements OnInit {
         this.roomsLoading = false;
         
         if (rooms.length === 0) {
-          this.snackBar.open('No hay habitaciones disponibles para estas fechas', 'Close', {
+          this.snackBar.open('No rooms available for these dates', 'Close', {
             duration: 4000
           });
         }
@@ -136,7 +135,7 @@ export class RoomsPageComponent implements OnInit {
       error: (error) => {
         this.roomsLoading = false;
         console.error('Error loading available rooms:', error);
-        this.snackBar.open('Error verificando disponibilidad', 'Close', {
+        this.snackBar.open('Error checking availability', 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar']
         });
@@ -150,15 +149,14 @@ export class RoomsPageComponent implements OnInit {
     return checkIn && checkOut && checkOut > checkIn;
   }
 
-  onReservarHabitacion(room: Room) {
+  onBookRoom(room: Room) {
     if (!this.isValidDateRange()) {
-      this.snackBar.open('Selecciona fechas válidas primero', 'Close', {
+      this.snackBar.open('Select valid dates first', 'Close', {
         duration: 3000
       });
       return;
     }
 
-    // Navegar a booking con roomId y fechas como query params
     this.router.navigate(['/booking/room', room.id], {
       queryParams: {
         checkIn: this.dateForm.value.checkIn.toISOString().split('T')[0],
@@ -174,11 +172,11 @@ export class RoomsPageComponent implements OnInit {
 
   getRoomTypeLabel(type: string): string {
     const types: any = {
-      'individual_1': 'Individual - 1 persona',
-      'individual_2': 'Individual - 2 personas', 
-      'individual_3': 'Individual - 3 personas',
-      'suite_2': 'Suite - 2 personas',
-      'suite_family': 'Suite Familiar'
+      'individual_1': 'Single - 1 person',
+      'individual_2': 'Single - 2 people', 
+      'individual_3': 'Single - 3 people',
+      'suite_2': 'Suite - 2 people',
+      'suite_family': 'Family Suite'
     };
     return types[type] || type;
   }

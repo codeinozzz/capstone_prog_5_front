@@ -1,4 +1,3 @@
-// src/app/services/auth.service.ts - CORREGIDO
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
@@ -38,7 +37,6 @@ export class AuthService implements OnDestroy {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   
-  // CORREGIDO: Subject para cleanup
   private destroy$ = new Subject<void>();
 
   currentUser$ = this.currentUserSubject.asObservable();
@@ -48,14 +46,12 @@ export class AuthService implements OnDestroy {
     this.checkAuthStatus();
   }
 
-  // CORREGIDO: Implementar OnDestroy
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   checkAuthStatus(): void {
-    // CORREGIDO: Usar takeUntil para cleanup
     this.http.get<AuthStatusResponse>(`${this.apiUrl}/auth/status`)
       .pipe(
         catchError(() => of({ success: true, authenticated: false })),
@@ -75,7 +71,7 @@ export class AuthService implements OnDestroy {
       map(response => response.data.user),
       catchError(() => {
         this.clearUser();
-        throw new Error('No autenticado');
+        throw new Error('Not authenticated');
       }),
       takeUntil(this.destroy$)
     );
@@ -89,14 +85,12 @@ export class AuthService implements OnDestroy {
   setUser(user: User): void {
     this.currentUserSubject.next(user);
     this.isAuthenticatedSubject.next(true);
-    // CORREGIDO: Evitar localStorage si no es estrictamente necesario
-    // localStorage.setItem('isAuthenticated', 'true');
+
   }
 
   clearUser(): void {
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
-    // localStorage.removeItem('isAuthenticated');
   }
 
   logout(): void {

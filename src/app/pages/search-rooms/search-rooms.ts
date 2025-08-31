@@ -1,4 +1,3 @@
-// src/app/pages/rooms-search/rooms-search.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -44,7 +43,6 @@ export class RoomsSearchPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Cargar algunas habitaciones por defecto
     this.loadDefaultRooms();
   }
 
@@ -56,7 +54,7 @@ export class RoomsSearchPageComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.error = 'Error cargando habitaciones';
+        this.error = 'Error loading rooms';
         this.loading = false;
         console.error('Error:', error);
       }
@@ -65,7 +63,6 @@ export class RoomsSearchPageComponent implements OnInit {
 
   onSearchRooms(filters: any) {
     if (Object.keys(filters).length === 0) {
-      // Si no hay filtros, cargar todas las habitaciones
       this.loadDefaultRooms();
       this.isSearching = false;
       this.currentFilters = {};
@@ -77,7 +74,7 @@ export class RoomsSearchPageComponent implements OnInit {
     this.isSearching = true;
     this.currentFilters = filters;
 
-    console.log('Buscando habitaciones con filtros:', filters);
+    console.log('Searching rooms with filters:', filters);
 
     this.roomService.searchRooms(filters).subscribe({
       next: (rooms) => {
@@ -86,26 +83,26 @@ export class RoomsSearchPageComponent implements OnInit {
         
         if (rooms.length === 0) {
           this.snackBar.open(
-            'No se encontraron habitaciones con esos criterios',
-            'Cerrar',
+            'No rooms found with those criteria',
+            'Close',
             { duration: 3000 }
           );
         } else {
           this.snackBar.open(
-            `Se encontraron ${rooms.length} habitacion(es)`,
-            'Cerrar',
+            `Found ${rooms.length} room(s)`,
+            'Close',
             { duration: 2000 }
           );
         }
       },
       error: (error) => {
-        this.error = 'Error en la búsqueda';
+        this.error = 'Search error';
         this.loading = false;
         console.error('Error searching rooms:', error);
         
         this.snackBar.open(
-          'Error al buscar habitaciones',
-          'Cerrar',
+          'Error searching for rooms',
+          'Close',
           { 
             duration: 4000,
             panelClass: ['error-snackbar']
@@ -116,7 +113,6 @@ export class RoomsSearchPageComponent implements OnInit {
   }
 
   onReserveRoom(room: Room) {
-    // Navegar a booking con el roomId
     this.router.navigate(['/booking/room', room.id], {
       queryParams: {
         checkIn: this.currentFilters.checkIn,
@@ -131,16 +127,16 @@ export class RoomsSearchPageComponent implements OnInit {
   }
 
   getHotelLocation(room: Room): string {
-    return room.hotel?.location || 'Ubicación no disponible';
+    return room.hotel?.location || 'Location not available';
   }
 
   getRoomTypeLabel(type: string): string {
     const types: any = {
-      'individual_1': 'Individual - 1 persona',
-      'individual_2': 'Individual - 2 personas', 
-      'individual_3': 'Individual - 3 personas',
-      'suite_2': 'Suite - 2 personas',
-      'suite_family': 'Suite Familiar'
+      'individual_1': 'Individual - 1 person',
+      'individual_2': 'Individual - 2 people', 
+      'individual_3': 'Individual - 3 people',
+      'suite_2': 'Suite - 2 people',
+      'suite_family': 'Family Suite'
     };
     return types[type] || type;
   }

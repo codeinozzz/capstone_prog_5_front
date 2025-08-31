@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -22,7 +22,8 @@ import { ClerkService, ClerkUser } from '../../services/clerk.service';
     MatProgressSpinnerModule
   ],
   templateUrl: './header.html',
-  styleUrl: './header.scss'
+  styleUrl: './header.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush  // OnPush - requires manual checks for observables
 })
 export class HeaderComponent implements OnInit {
   isAuthenticated = false;
@@ -31,20 +32,24 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private clerkService: ClerkService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.clerkService.clerkLoaded$.subscribe(loaded => {
       this.clerkLoading = !loaded;
+      this.cdr.markForCheck();
     });
 
     this.clerkService.isAuthenticated$.subscribe(authenticated => {
       this.isAuthenticated = authenticated;
+      this.cdr.markForCheck();
     });
 
     this.clerkService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      this.cdr.markForCheck(); // Force detection when user changes
     });
   }
 
@@ -64,7 +69,7 @@ export class HeaderComponent implements OnInit {
     try {
       await this.clerkService.signOut();
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+      console.error('Error signing out:', error);
     }
   }
 
@@ -80,10 +85,9 @@ export class HeaderComponent implements OnInit {
     }
     
     const email = this.currentUser.emailAddresses[0]?.emailAddress;
-    return email ? email.split('@')[0] : 'Usuario';
+    return email ? email.split('@')[0] : 'User';
   }
 
-  // Obtener email
   getEmail(): string {
     return this.currentUser?.emailAddresses[0]?.emailAddress || '';
   }

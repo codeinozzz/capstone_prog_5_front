@@ -51,7 +51,6 @@ export class BookingComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // correction feedback:  takeUntil in all subscriptions
     this.route.params
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
@@ -113,7 +112,6 @@ export class BookingComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // use takeUntil
     this.hotelService.getHotelById(this.hotelId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({

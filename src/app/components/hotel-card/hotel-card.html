@@ -41,20 +41,19 @@
 
     <div class="hotel-info" *ngIf="hotel.createdAt">
       <small class="created-date">
-        Added: {{ hotel.createdAt | date:'shortDate' }}
+        Added on: {{ hotel.createdAt | date:'shortDate' }}
       </small>
     </div>
   </mat-card-content>
 
   <mat-card-actions>
-    <!-- CORREGIDO: Botón ahora va a habitaciones -->
     <button 
       mat-raised-button 
       color="primary" 
-      (click)="onVerHabitaciones()"
+      (click)="onViewRooms()"
       class="reserve-btn">
       <mat-icon>meeting_room</mat-icon>
-      Ver Habitaciones
+      View Rooms
     </button>
   </mat-card-actions>
 </mat-card>
