@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { ClerkService } from '../../services/clerk.service';
+import { ClerkService } from '../../../../services/clerk.service';
 
 @Component({
   selector: 'app-login',

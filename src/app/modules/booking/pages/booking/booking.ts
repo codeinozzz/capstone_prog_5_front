@@ -7,11 +7,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Subject, takeUntil } from 'rxjs';
 
-import { HeaderComponent } from '../../components/header/header';
-import { FooterComponent } from '../../components/footer/footer';
+import { HeaderComponent } from '../../../../components/header/header';
+import { FooterComponent } from '../../../../components/footer/footer';
 import { BookingComponent as BookingFormComponent } from '../../components/booking/booking';
-import { HotelService, Hotel } from '../../services/hotel.service';
-import { RoomService, Room } from '../../services/room.service';
+import { HotelService, Hotel } from '../../../../services/hotel.service';
+import { RoomService, Room } from '../../../../services/room.service';
 
 @Component({
   selector: 'app-booking-page',

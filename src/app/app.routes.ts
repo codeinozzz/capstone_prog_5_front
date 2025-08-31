@@ -1,5 +1,5 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { canDeactivateGuard } from './guards/can-deactivate.guard';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -7,38 +7,49 @@ export const routes: Routes = [
     path: '', 
     loadComponent: () => import('./pages/home/home').then(c => c.HomeComponent) 
   },
+  
+  // LAZY LOADING DE MÓDULOS - NUEVAS RUTAS
   { 
-    path: 'login', 
-    loadComponent: () => import('./pages/login/login').then(c => c.LoginComponent) 
+    path: 'booking', 
+    loadChildren: () => import('./modules/booking/booking.module').then(m => m.BookingModule),
+    canActivate: [AuthGuard]
   },
+  { 
+    path: 'user', 
+    loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule) 
+  },
+
+
   { 
     path: 'hotels', 
     redirectTo: '/', 
     pathMatch: 'full' 
   },
-
   { 
     path: 'search-rooms', 
     loadComponent: () => import('./pages/search-rooms/search-rooms').then(c => c.RoomsSearchPageComponent)
   },
-  
   { 
     path: 'hotel/:hotelId/rooms', 
     loadComponent: () => import('./pages/rooms/rooms').then(c => c.RoomsPageComponent),
     canActivate: [AuthGuard]
   },
   
+  // RUTAS REDIRIGIDAS A LOS NUEVOS MÓDULOS
   { 
-    path: 'booking/room/:roomId', 
-    loadComponent: () => import('./pages/booking/booking').then(c => c.BookingComponent),
-    canActivate: [AuthGuard],
-    canDeactivate: [canDeactivateGuard]
+    path: 'login', 
+    redirectTo: '/user/login',
+    pathMatch: 'full'
   },
-
   { 
     path: 'my-bookings', 
-    loadComponent: () => import('./pages/my-bookings/my-bookings').then(c => c.MyBookingsComponent),
-    canActivate: [AuthGuard]
+    redirectTo: '/user/my-bookings',
+    pathMatch: 'full'
+  },
+  { 
+    path: 'booking/room/:roomId', 
+    redirectTo: '/booking/room/:roomId',
+    pathMatch: 'full'
   },
   
   { 

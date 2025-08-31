@@ -10,9 +10,9 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { CanComponentDeactivate } from '../../guards/can-deactivate.guard';
-import { BookingService, BookingData } from '../../services/booking.service';
-import { ClerkService } from '../../services/clerk.service';
+import { CanComponentDeactivate } from '../../../../guards/can-deactivate.guard';
+import { BookingService, BookingData } from '../../../../services/booking.service';
+import { ClerkService } from '../../../../services/clerk.service';
 
 @Component({
   selector: 'app-booking',

@@ -9,11 +9,11 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, takeUntil } from 'rxjs';
 
-import { HeaderComponent } from '../../components/header/header';
-import { FooterComponent } from '../../components/footer/footer';
-import { BookingService } from '../../services/booking.service';
-import { ClerkService } from '../../services/clerk.service';
-import { CancelBookingDialogComponent } from '../../components/cancel-booking-dialog/cancel-booking-dialog';
+import { HeaderComponent } from '../../../../components/header/header';
+import { FooterComponent } from '../../../../components/footer/footer';
+import { BookingService } from '../../../../services/booking.service';
+import { ClerkService } from '../../../../services/clerk.service';
+import { CancelBookingDialogComponent } from '../../../booking/components/cancel-booking-dialog/cancel-booking-dialog';
 
 interface Booking {
   id: string;
