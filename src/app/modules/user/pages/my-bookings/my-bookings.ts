@@ -14,6 +14,9 @@ import { FooterComponent } from '../../../../components/footer/footer';
 import { BookingService } from '../../../../services/booking.service';
 import { ClerkService } from '../../../../services/clerk.service';
 import { CancelBookingDialogComponent } from '../../../booking/components/cancel-booking-dialog/cancel-booking-dialog';
+import { DateUtilsService } from '../../../../services/utils/date-utils.service';
+import { ErrorHandlerService } from '../../../../services/utils/error-handler.service';
+import { UiUtilsService } from '../../../../services/utils/ui-utils.service';
 
 interface Booking {
   id: string;
@@ -62,7 +65,10 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
     private bookingService: BookingService,
     private clerkService: ClerkService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dateUtils: DateUtilsService,
+    private errorHandler: ErrorHandlerService,
+    private uiUtils: UiUtilsService
   ) {}
 
   ngOnInit() {
@@ -75,52 +81,49 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   }
 
   loadBookings() {
-    if (!this.clerkService.authenticated) {
-      this.error = 'Authentication required';
-      this.loading = false;
-      return;
-    }
+    if (!this.validateAuthentication()) return;
 
-    this.loading = true;
-    this.error = null;
+    this.setLoadingState(true);
 
     this.bookingService.getMyBookings()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
-          this.bookings = response.data || [];
-          this.loading = false;
-          console.log('Bookings loaded:', this.bookings);
-        },
-        error: (error) => {
-          this.error = error.message || 'Error loading bookings';
-          this.loading = false;
-          console.error('Error loading bookings:', error);
-          
-          this.snackBar.open(
-            'Error loading bookings: ' + error.message,
-            'Close',
-            {
-              duration: 5000,
-              panelClass: ['error-snackbar']
-            }
-          );
-        }
+        next: (response) => this.handleBookingsSuccess(response),
+        error: (error) => this.handleBookingsError(error)
       });
   }
 
-  onCancelBooking(booking: Booking) {
-    const checkInDate = new Date(booking.checkInDate);
-    const now = new Date();
-    const daysDiff = Math.ceil((checkInDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  private validateAuthentication(): boolean {
+    if (!this.clerkService.authenticated) {
+      this.error = 'Authentication required';
+      this.loading = false;
+      return false;
+    }
+    return true;
+  }
 
+  private setLoadingState(loading: boolean): void {
+    this.loading = loading;
+    this.error = null;
+  }
+
+  private handleBookingsSuccess(response: any): void {
+    this.bookings = response.data || [];
+    this.loading = false;
+    console.log('Bookings loaded:', this.bookings);
+  }
+
+  private handleBookingsError(error: any): void {
+    this.error = this.errorHandler.handleComponentError(error, 'Loading bookings');
+    this.loading = false;
+  }
+
+  onCancelBooking(booking: Booking) {
+    const dialogData = this.buildCancelDialogData(booking);
+    
     const dialogRef = this.dialog.open(CancelBookingDialogComponent, {
       width: '450px',
-      data: {
-        booking: booking,
-        canCancel: daysDiff >= 3,
-        daysDiff: daysDiff
-      }
+      data: dialogData
     });
 
     dialogRef.afterClosed()
@@ -132,74 +135,60 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
       });
   }
 
+  private buildCancelDialogData(booking: Booking) {
+    const daysDiff = this.dateUtils.getDaysUntil(booking.checkInDate);
+    
+    return {
+      booking: booking,
+      canCancel: daysDiff >= 3,
+      daysDiff: daysDiff
+    };
+  }
+
   private performCancellation(booking: Booking) {
     this.bookingService.cancelBooking(booking.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
-          if (response.success) {
-            const bookingIndex = this.bookings.findIndex(b => b.id === booking.id);
-            if (bookingIndex !== -1) {
-              this.bookings[bookingIndex].status = 'cancelled';
-            }
-            
-            this.snackBar.open(
-              'Booking cancelled successfully',
-              'Close',
-              {
-                duration: 3000,
-                panelClass: ['success-snackbar']
-              }
-            );
-          }
-        },
-        error: (error) => {
-          console.error('Error cancelling booking:', error);
-          
-          let errorMessage = 'Error cancelling booking';
-          if (error.error?.message) {
-            errorMessage = error.error.message;
-          }
-          
-          this.snackBar.open(
-            errorMessage,
-            'Close',
-            {
-              duration: 5000,
-              panelClass: ['error-snackbar']
-            }
-          );
-        }
+        next: (response) => this.handleCancellationSuccess(response, booking.id),
+        error: (error) => this.handleCancellationError(error)
       });
   }
 
-  getStatusColor(status: string): string {
-    switch (status) {
-      case 'confirmed':
-        return 'primary';
-      case 'cancelled':
-        return 'warn';
-      default:
-        return '';
+  private handleCancellationSuccess(response: any, bookingId: string): void {
+    if (response.success) {
+      this.updateBookingStatus(bookingId, 'cancelled');
+      this.errorHandler.showSuccess('Booking cancelled successfully');
     }
+  }
+
+  private updateBookingStatus(bookingId: string, status: 'cancelled' | 'confirmed'): void {
+    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+    if (bookingIndex !== -1) {
+      this.bookings[bookingIndex].status = status;
+    }
+  }
+
+  private handleCancellationError(error: any): void {
+    this.errorHandler.handleComponentError(error, 'Cancelling booking');
+  }
+
+  getStatusColor(status: string): string {
+    return this.uiUtils.getStatusColor(status);
   }
 
   getStatusIcon(status: string): string {
-    switch (status) {
-      case 'confirmed':
-        return 'check_circle';
-      case 'cancelled':
-        return 'cancel';
-      default:
-        return 'help';
-    }
+    return this.uiUtils.getStatusIcon(status);
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString();
+    return this.dateUtils.formatDate(dateString);
   }
 
   retryLoadBookings() {
     this.loadBookings();
+  }
+
+  trackByBookingId(index: number, booking: Booking): string {
+    return booking.id;
   }
 }

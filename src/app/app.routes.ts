@@ -1,4 +1,3 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 
@@ -8,7 +7,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home/home').then(c => c.HomeComponent) 
   },
   
-  // LAZY LOADING DE MÓDULOS - NUEVAS RUTAS
   { 
     path: 'booking', 
     loadChildren: () => import('./modules/booking/booking.module').then(m => m.BookingModule),
@@ -35,7 +33,6 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   
-  // RUTAS REDIRIGIDAS A LOS NUEVOS MÓDULOS
   { 
     path: 'login', 
     redirectTo: '/user/login',

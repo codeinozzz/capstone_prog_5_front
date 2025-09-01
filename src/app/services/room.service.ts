@@ -1,7 +1,11 @@
+// src/app/services/room.service.ts (refactorizado)
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { BaseApiService } from './utils/base-api.service';
+import { ErrorHandlerService } from './utils/error-handler.service';
 
 export interface Room {
   id: string;
@@ -22,132 +26,95 @@ export interface Room {
   };
 }
 
-interface RoomApiResponse {
-  success: boolean;
-  data: Room[];
-  total: number;
+export interface RoomSearchFilters {
+  numberOfPeople?: number;
+  type?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  location?: string;
+  checkIn?: string;
+  checkOut?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class RoomService {
-  private apiUrl = 'http://localhost:3000/api';
+export class RoomService extends BaseApiService {
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    http: HttpClient,
+    errorHandler: ErrorHandlerService
+  ) {
+    super(http, errorHandler);
+  }
 
+  /**
+   * Obtiene habitaciones por hotel
+   */
   getRoomsByHotel(hotelId: string): Observable<Room[]> {
-    return this.http.get<RoomApiResponse>(`${this.apiUrl}/rooms/hotel/${hotelId}`)
-      .pipe(
-        map(response => {
-          if (response.success) {
-            return response.data;
-          }
-          throw new Error('Error loading rooms');
-        }),
-        catchError(this.handleError)
-      );
+    return this.get<Room[]>(`rooms/hotel/${hotelId}`);
   }
 
+  /**
+   * Obtiene habitaciones disponibles para fechas específicas
+   */
   getAvailableRooms(hotelId: string, checkIn: string, checkOut: string): Observable<Room[]> {
-    const params = new URLSearchParams({
-      hotelId: hotelId,
-      checkIn: checkIn,
-      checkOut: checkOut
-    });
-
-    return this.http.get<RoomApiResponse>(`${this.apiUrl}/rooms/available?${params.toString()}`)
-      .pipe(
-        map(response => {
-          if (response.success) {
-            return response.data;
-          }
-          throw new Error('Error checking availability');
-        }),
-        catchError(this.handleError)
-      );
+    const params = {
+      hotelId,
+      checkIn,
+      checkOut
+    };
+    return this.get<Room[]>('rooms/available', params);
   }
 
+  /**
+   * Obtiene una habitación por ID
+   */
   getRoomById(id: string): Observable<Room> {
-    return this.http.get<{success: boolean, data: Room}>(`${this.apiUrl}/rooms/${id}`)
-      .pipe(
-        map(response => {
-          if (response.success) {
-            return response.data;
-          }
-          throw new Error('Room not found');
-        }),
-        catchError(this.handleError)
-      );
+    return this.get<Room>(`rooms/${id}`);
   }
 
-  searchRooms(filters: {
-    numberOfPeople?: number;
-    type?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    location?: string;
-    checkIn?: string;
-    checkOut?: string;
-  }): Observable<Room[]> {
-    const params = new URLSearchParams();
-    
-    if (filters.numberOfPeople) {
-      params.append('numberOfPeople', filters.numberOfPeople.toString());
-    }
-    if (filters.type) {
-      params.append('type', filters.type);
-    }
-    if (filters.minPrice) {
-      params.append('minPrice', filters.minPrice.toString());
-    }
-    if (filters.maxPrice) {
-      params.append('maxPrice', filters.maxPrice.toString());
-    }
-    if (filters.location) {
-      params.append('location', filters.location);
-    }
-    if (filters.checkIn) {
-      params.append('checkIn', filters.checkIn);
-    }
-    if (filters.checkOut) {
-      params.append('checkOut', filters.checkOut);
-    }
-
-    return this.http.get<RoomApiResponse>(`${this.apiUrl}/rooms/search?${params.toString()}`)
-      .pipe(
-        map(response => {
-          if (response.success) {
-            return response.data;
-          }
-          throw new Error('Search error');
-        }),
-        catchError(this.handleError)
-      );
+  /**
+   * Busca habitaciones con filtros
+   */
+  searchRooms(filters: RoomSearchFilters): Observable<Room[]> {
+    const cleanFilters = this.cleanSearchFilters(filters);
+    return this.get<Room[]>('rooms/search', cleanFilters);
   }
 
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Unknown error';
+  /**
+   * Limpia filtros de búsqueda removiendo valores vacíos
+   */
+  private cleanSearchFilters(filters: RoomSearchFilters): RoomSearchFilters {
+    const cleaned: RoomSearchFilters = {};
     
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      switch (error.status) {
-        case 0:
-          errorMessage = 'Cannot connect to server. Check that the API is running.';
-          break;
-        case 404:
-          errorMessage = 'Rooms not found';
-          break;
-        case 500:
-          errorMessage = 'Internal server error';
-          break;
-        default:
-          errorMessage = `Error ${error.status}: ${error.message}`;
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        cleaned[key as keyof RoomSearchFilters] = value;
       }
-    }
+    });
     
-    console.error('Error in RoomService:', errorMessage);
-    return throwError(() => new Error(errorMessage));
+    return cleaned;
+  }
+
+  /**
+   * Verifica si hay habitaciones disponibles para un hotel en fechas específicas
+   */
+  checkAvailability(hotelId: string, checkIn: string, checkOut: string): Observable<boolean> {
+    return this.getAvailableRooms(hotelId, checkIn, checkOut).pipe(
+      map(rooms => rooms.length > 0)
+    );
+  }
+
+  /**
+   * Obtiene capacidades de habitación disponibles
+   */
+  getRoomCapacities(): Array<{value: number, label: string}> {
+    return [
+      { value: 1, label: '1 person' },
+      { value: 2, label: '2 people' },
+      { value: 3, label: '3 people' },
+      { value: 4, label: '4 people' }
+    ];
   }
 }

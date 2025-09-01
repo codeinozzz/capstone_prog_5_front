@@ -8,6 +8,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ClerkService, ClerkUser } from '../../services/clerk.service';
+import { UiUtilsService } from '../../services/utils/ui-utils.service';
+import { ErrorHandlerService } from '../../services/utils/error-handler.service';
 
 @Component({
   selector: 'app-header',
@@ -23,7 +25,7 @@ import { ClerkService, ClerkUser } from '../../services/clerk.service';
   ],
   templateUrl: './header.html',
   styleUrl: './header.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush  // OnPush - requires manual checks for observables
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent implements OnInit {
   isAuthenticated = false;
@@ -33,10 +35,18 @@ export class HeaderComponent implements OnInit {
   constructor(
     private clerkService: ClerkService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    
+    private uiUtils: UiUtilsService,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit() {
+    this.initializeClerkListeners();
+  }
+
+ 
+  private initializeClerkListeners(): void {
     this.clerkService.clerkLoaded$.subscribe(loaded => {
       this.clerkLoading = !loaded;
       this.cdr.markForCheck();
@@ -49,46 +59,46 @@ export class HeaderComponent implements OnInit {
 
     this.clerkService.currentUser$.subscribe(user => {
       this.currentUser = user;
-      this.cdr.markForCheck(); // Force detection when user changes
+      this.cdr.markForCheck();
     });
   }
 
+  
   goHome(): void {
     this.router.navigate(['/']);
   }
 
+ 
   goToLogin(): void {
     this.router.navigate(['/login']);
   }
 
+ 
   openSignIn(): void {
-    this.clerkService.openSignIn();
+    try {
+      this.clerkService.openSignIn();
+    } catch (error) {
+      this.errorHandler.handleComponentError(error, 'Opening sign in');
+    }
   }
 
+ 
   async signOut(): Promise<void> {
     try {
       await this.clerkService.signOut();
+      this.errorHandler.showSuccess('Signed out successfully');
     } catch (error) {
-      console.error('Error signing out:', error);
+      this.errorHandler.handleComponentError(error, 'Sign out');
     }
   }
 
+  
   getDisplayName(): string {
-    if (!this.currentUser) return '';
-    
-    if (this.currentUser.firstName) {
-      return this.currentUser.firstName;
-    }
-    
-    if (this.currentUser.username) {
-      return this.currentUser.username;
-    }
-    
-    const email = this.currentUser.emailAddresses[0]?.emailAddress;
-    return email ? email.split('@')[0] : 'User';
+    return this.uiUtils.getUserDisplayName(this.currentUser);
   }
 
+  
   getEmail(): string {
-    return this.currentUser?.emailAddresses[0]?.emailAddress || '';
+    return this.uiUtils.getUserEmail(this.currentUser);
   }
 }

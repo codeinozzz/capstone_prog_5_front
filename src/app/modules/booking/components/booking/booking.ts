@@ -10,9 +10,14 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+
 import { CanComponentDeactivate } from '../../../../guards/can-deactivate.guard';
 import { BookingService, BookingData } from '../../../../services/booking.service';
 import { ClerkService } from '../../../../services/clerk.service';
+import { FormValidatorService } from '../../../../services/utils/form-validator.service';
+import { DateUtilsService } from '../../../../services/utils/date-utils.service';
+import { ErrorHandlerService } from '../../../../services/utils/error-handler.service';
+import { UiUtilsService } from '../../../../services/utils/ui-utils.service';
 
 @Component({
   selector: 'app-booking',
@@ -32,7 +37,7 @@ import { ClerkService } from '../../../../services/clerk.service';
   ],
   templateUrl: './booking.html',
   styleUrl: './booking.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush  //  OnPush para mejor performance
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BookingComponent implements CanComponentDeactivate, OnInit {
   @Input() hotelId: string = '';
@@ -44,17 +49,29 @@ export class BookingComponent implements CanComponentDeactivate, OnInit {
   isLoading = false;
   isSuccess = false;
   confirmationNumber = '';
-  
-  minDate = new Date();
+  minDate: Date;
 
   constructor(
     private fb: FormBuilder,
     private bookingService: BookingService,
     private snackBar: MatSnackBar,
     private clerkService: ClerkService,
-    private cdr: ChangeDetectorRef  
+    private cdr: ChangeDetectorRef,
+    private formValidator: FormValidatorService,
+    private dateUtils: DateUtilsService,
+    private errorHandler: ErrorHandlerService,
+    private uiUtils: UiUtilsService
   ) {
-    this.bookingForm = this.fb.group({
+    this.minDate = this.dateUtils.getMinDate();
+    this.bookingForm = this.createBookingForm();
+  }
+
+  ngOnInit() {
+    this.initializeUserData();
+  }
+
+  private createBookingForm(): FormGroup {
+    return this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       phone: ['', [Validators.required]],
@@ -64,93 +81,104 @@ export class BookingComponent implements CanComponentDeactivate, OnInit {
     });
   }
 
-  ngOnInit() {
+  private initializeUserData(): void {
     if (this.clerkService.authenticated) {
       const user = this.clerkService.user;
       if (user) {
         this.bookingForm.patchValue({
           firstName: user.firstName || '',
           lastName: user.lastName || '',
-          email: user.emailAddresses[0]?.emailAddress || ''
+          email: this.uiUtils.getUserEmail(user)
         });
       }
     }
   }
 
   getFieldError(fieldName: string): string {
-    const field = this.bookingForm.get(fieldName);
-
-    if (field?.hasError('required')) {
-      return `${fieldName} is required`;
-    }
-    if (field?.hasError('email')) {
-      return 'Enter a valid email';
-    }
-    if (field?.hasError('minlength')) {
-      return `Must be at least 2 characters`;
-    }
-
-    return '';
+    return this.formValidator.getFieldError(this.bookingForm, fieldName);
   }
 
   hasFieldError(fieldName: string): boolean {
-    const field = this.bookingForm.get(fieldName);
-    return !!(field?.invalid && field?.touched);
+    return this.formValidator.hasFieldError(this.bookingForm, fieldName);
   }
 
   onSubmit(): void {
-    if (this.bookingForm.valid && !this.isLoading) {
-      this.isLoading = true;
+    if (!this.validateForm()) return;
+    this.processBooking();
+  }
+
+  private validateForm(): boolean {
+    if (!this.bookingForm.valid) {
+      this.formValidator.markAllFieldsAsTouched(this.bookingForm);
+      return false;
+    }
+
+    if (!this.isValidDateRange()) {
+      this.errorHandler.showError('Please select valid check-in and check-out dates');
+      return false;
+    }
+
+    return true;
+  }
+
+  private isValidDateRange(): boolean {
+    const checkIn = this.bookingForm.value.checkInDate;
+    const checkOut = this.bookingForm.value.checkOutDate;
+    return this.formValidator.isValidDateRange(checkIn, checkOut);
+  }
+
+  private processBooking(): void {
+    this.isLoading = true;
+    this.cdr.markForCheck();
+
+    const bookingData = this.buildBookingData();
+
+    this.bookingService.createBooking(bookingData).subscribe({
+      next: (response) => this.handleBookingSuccess(response),
+      error: (error) => this.handleBookingError(error)
+    });
+  }
+
+  private buildBookingData(): BookingData {
+    const formValue = this.bookingForm.value;
+    
+    return {
+      ...formValue,
+      hotelId: this.hotelId,
+      roomId: this.roomId,
+      checkInDate: this.dateUtils.toISOString(formValue.checkInDate),
+      checkOutDate: this.dateUtils.toISOString(formValue.checkOutDate)
+    };
+  }
+
+  private handleBookingSuccess(response: any): void {
+    this.isLoading = false;
+    
+    if (response.success) {
+      this.isSuccess = true;
+      this.confirmationNumber = response.data?.confirmationNumber || this.uiUtils.generateConfirmationNumber();
       this.cdr.markForCheck();
-
-      const bookingData: BookingData = {
-        ...this.bookingForm.value,
-        hotelId: this.hotelId,
-        roomId: this.roomId,
-        checkInDate: this.bookingForm.value.checkInDate?.toISOString(),
-        checkOutDate: this.bookingForm.value.checkOutDate?.toISOString()
-      };
-
-      this.bookingService.createBooking(bookingData).subscribe({
-        next: (response) => {
-          this.isLoading = false;
-          if (response.success) {
-            this.isSuccess = true;
-            this.confirmationNumber = response.data?.confirmationNumber || 'N/A';
-            this.cdr.markForCheck();
-            this.snackBar.open('Booking created successfully!', 'Close', {
-              duration: 3000,
-              panelClass: ['success-snackbar']
-            });
-            this.bookingCompleted.emit(response);
-          } else {
-            this.cdr.markForCheck();
-            this.showError('Error creating booking');
-          }
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.cdr.markForCheck(); 
-          this.showError(error.error?.message || 'Error creating booking');
-        }
-      });
+      
+      this.errorHandler.showSuccess('Booking created successfully!');
+      this.bookingCompleted.emit(response);
     } else {
-      this.bookingForm.markAllAsTouched();
+      this.handleBookingError(new Error('Booking creation failed'));
     }
   }
 
-  private showError(message: string): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 5000,
-      panelClass: ['error-snackbar']
-    });
+  private handleBookingError(error: any): void {
+    this.isLoading = false;
+    this.cdr.markForCheck();
+    
+    const errorMessage = this.errorHandler.handleComponentError(error, 'Booking creation');
+    console.error('Booking error:', errorMessage);
   }
 
   newBooking(): void {
     this.isSuccess = false;
     this.confirmationNumber = '';
-    this.bookingForm.reset();
-    this.cdr.markForCheck(); 
+    this.formValidator.resetForm(this.bookingForm);
+    this.cdr.markForCheck();
   }
 
   canDeactivate(): boolean {
