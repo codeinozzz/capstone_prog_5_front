@@ -122,3 +122,29 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .rooms-search-page { padding: 12px 8px; }
+  
+  .search-card {
+    margin: 0 0 20px 0;
+    
+    mat-card-content, mat-card-actions {
+      padding: 12px;
+    }
+    
+    .search-form { grid-template-columns: 1fr; }
+    
+    mat-card-actions {
+      flex-direction: column;
+      gap: 8px;
+      
+      button {
+        width: 100%;
+        height: 44px;
+      }
+    }
+  }
+  
+  .rooms-grid { grid-template-columns: 1fr; }
+}

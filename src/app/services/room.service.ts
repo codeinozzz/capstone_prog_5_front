@@ -1,4 +1,3 @@
-// src/app/services/room.service.ts (refactorizado)
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -48,16 +47,11 @@ export class RoomService extends BaseApiService {
     super(http, errorHandler);
   }
 
-  /**
-   * Obtiene habitaciones por hotel
-   */
+
   getRoomsByHotel(hotelId: string): Observable<Room[]> {
     return this.get<Room[]>(`rooms/hotel/${hotelId}`);
   }
 
-  /**
-   * Obtiene habitaciones disponibles para fechas específicas
-   */
   getAvailableRooms(hotelId: string, checkIn: string, checkOut: string): Observable<Room[]> {
     const params = {
       hotelId,
@@ -67,24 +61,17 @@ export class RoomService extends BaseApiService {
     return this.get<Room[]>('rooms/available', params);
   }
 
-  /**
-   * Obtiene una habitación por ID
-   */
+
   getRoomById(id: string): Observable<Room> {
     return this.get<Room>(`rooms/${id}`);
   }
 
-  /**
-   * Busca habitaciones con filtros
-   */
   searchRooms(filters: RoomSearchFilters): Observable<Room[]> {
     const cleanFilters = this.cleanSearchFilters(filters);
     return this.get<Room[]>('rooms/search', cleanFilters);
   }
 
-  /**
-   * Limpia filtros de búsqueda removiendo valores vacíos
-   */
+
   private cleanSearchFilters(filters: RoomSearchFilters): RoomSearchFilters {
     const cleaned: RoomSearchFilters = {};
     
@@ -97,18 +84,14 @@ export class RoomService extends BaseApiService {
     return cleaned;
   }
 
-  /**
-   * Verifica si hay habitaciones disponibles para un hotel en fechas específicas
-   */
+
   checkAvailability(hotelId: string, checkIn: string, checkOut: string): Observable<boolean> {
     return this.getAvailableRooms(hotelId, checkIn, checkOut).pipe(
       map(rooms => rooms.length > 0)
     );
   }
 
-  /**
-   * Obtiene capacidades de habitación disponibles
-   */
+
   getRoomCapacities(): Array<{value: number, label: string}> {
     return [
       { value: 1, label: '1 person' },

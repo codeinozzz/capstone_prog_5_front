@@ -224,3 +224,15 @@
     color: white !important;
   }
 }
+
+@media (max-width: 480px) {
+  .booking-card {
+    margin: 12px 8px;
+    
+    mat-card-header, mat-card-content {
+      padding: 12px;
+    }
+    
+    .submit-btn { height: 44px; }
+  }
+}

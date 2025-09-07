@@ -343,3 +343,13 @@
     color: white !important;
   }
 }
+
+@media (max-width: 480px) {
+  .rooms-page { padding: 12px 8px; }
+  
+  .date-form { flex-direction: column; }
+  
+  .rooms-grid { grid-template-columns: 1fr; }
+  
+  .reserve-room-btn { height: 44px; }
+}

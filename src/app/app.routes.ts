@@ -7,6 +7,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home/home').then(c => c.HomeComponent) 
   },
   
+  // LAZY LOADING DE MÓDULes
   { 
     path: 'booking', 
     loadChildren: () => import('./modules/booking/booking.module').then(m => m.BookingModule),

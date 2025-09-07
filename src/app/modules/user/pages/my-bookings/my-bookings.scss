@@ -292,3 +292,9 @@
     color: white !important;
   }
 }
+
+@media (max-width: 480px) {
+  .bookings-grid { grid-template-columns: 1fr; }
+  
+  .cancel-btn, .cancelled-btn { height: 44px; }
+}

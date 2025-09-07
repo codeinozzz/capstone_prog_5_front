@@ -234,13 +234,16 @@
     }
   }
 }
-
 @media (max-width: 480px) {
   .app-header {
-    .auth-section {
-      .auth-buttons {
-        gap: 4px;
-      }
-    }
+    padding: 0 8px;
+    
+    .header-center { display: none; }
+    
+    .brand-text { font-size: 16px; }
+    
+    .auth-buttons .button-text { display: none; }
+    
+    .user-name-short { display: none; }
   }
 }
